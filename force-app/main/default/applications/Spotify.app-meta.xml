@@ -13,6 +13,7 @@
     <isNavTabPersistenceDisabled>false</isNavTabPersistenceDisabled>
     <label>Spotify</label>
     <navType>Standard</navType>
+    <tabs>Track__c</tabs>
     <uiType>Lightning</uiType>
     <utilityBar>Spotify_UtilityBar</utilityBar>
 </CustomApplication>
