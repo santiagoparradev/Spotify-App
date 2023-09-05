@@ -16,23 +16,23 @@
             </layoutItems>
             <layoutItems>
                 <behavior>Edit</behavior>
-                <field>SpotifyUrl__c</field>
+                <field>Url__c</field>
             </layoutItems>
             <layoutItems>
                 <behavior>Edit</behavior>
-                <field>SpotifyDiscNumber__c</field>
+                <field>DiscNumber__c</field>
             </layoutItems>
             <layoutItems>
                 <behavior>Edit</behavior>
-                <field>SpotifyDurationMs__c</field>
+                <field>DurationMs__c</field>
             </layoutItems>
             <layoutItems>
                 <behavior>Edit</behavior>
-                <field>SpotifyExplicit__c</field>
+                <field>Explicit__c</field>
             </layoutItems>
             <layoutItems>
                 <behavior>Edit</behavior>
-                <field>SpotifyMarkets__c</field>
+                <field>Markets__c</field>
             </layoutItems>
         </layoutColumns>
         <layoutColumns>
