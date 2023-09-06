@@ -10,5 +10,5 @@
         <restricted>true</restricted>
         <valueSetName>GlobalMarkeds</valueSetName>
     </valueSet>
-    <visibleLines>4</visibleLines>
+    <visibleLines>8</visibleLines>
 </CustomField>
