@@ -32,7 +32,7 @@
             </layoutItems>
             <layoutItems>
                 <behavior>Edit</behavior>
-                <field>public__c</field>
+                <field>Public__c</field>
             </layoutItems>
         </layoutColumns>
         <layoutColumns>
