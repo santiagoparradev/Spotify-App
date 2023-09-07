@@ -21,7 +21,7 @@
         <allowEdit>true</allowEdit>
         <allowRead>true</allowRead>
         <modifyAllRecords>false</modifyAllRecords>
-        <object>Relationship__c</object>
+        <object>TrackArtist__c</object>
         <viewAllRecords>false</viewAllRecords>
     </objectPermissions>
     <objectPermissions>
@@ -38,7 +38,7 @@
         <visibility>Visible</visibility>
     </tabSettings>
     <tabSettings>
-        <tab>Relationship__c</tab>
+        <tab>TrackArtist__c</tab>
         <visibility>Visible</visibility>
     </tabSettings>
     <tabSettings>
