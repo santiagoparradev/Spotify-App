@@ -154,12 +154,12 @@
     <enableStreamingApi>true</enableStreamingApi>
     <externalSharingModel>ReadWrite</externalSharingModel>
     <gender>Masculine</gender>
-    <label>Track</label>
+    <label>Artist</label>
     <nameField>
-        <label>Track Name</label>
+        <label>Artist Name</label>
         <type>Text</type>
     </nameField>
-    <pluralLabel>Tracks</pluralLabel>
+    <pluralLabel>Artists</pluralLabel>
     <searchLayouts></searchLayouts>
     <sharingModel>ReadWrite</sharingModel>
     <visibility>Public</visibility>
