@@ -152,15 +152,15 @@
     <enableSearch>false</enableSearch>
     <enableSharing>true</enableSharing>
     <enableStreamingApi>true</enableStreamingApi>
-    <externalSharingModel>Private</externalSharingModel>
+    <externalSharingModel>ControlledByParent</externalSharingModel>
     <gender>Feminine</gender>
-    <label>Relationship</label>
+    <label>TrackArtist</label>
     <nameField>
-        <label>Relationship Name</label>
+        <label>TrackArtist Name</label>
         <type>Text</type>
     </nameField>
-    <pluralLabel>Relationships</pluralLabel>
+    <pluralLabel>TrackArtists</pluralLabel>
     <searchLayouts></searchLayouts>
-    <sharingModel>ReadWrite</sharingModel>
+    <sharingModel>ControlledByParent</sharingModel>
     <visibility>Public</visibility>
 </CustomObject>
