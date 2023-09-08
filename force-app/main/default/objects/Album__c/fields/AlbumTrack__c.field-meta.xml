@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>AlbumTrack__c</fullName>
+    <externalId>false</externalId>
+    <label>AlbumTrack</label>
+    <referenceTo>AlbumTrack__c</referenceTo>
+    <relationshipLabel>Albums</relationshipLabel>
+    <relationshipName>Albums</relationshipName>
+    <relationshipOrder>0</relationshipOrder>
+    <reparentableMasterDetail>false</reparentableMasterDetail>
+    <trackTrending>false</trackTrending>
+    <type>MasterDetail</type>
+    <writeRequiresMasterRead>false</writeRequiresMasterRead>
+</CustomField>
