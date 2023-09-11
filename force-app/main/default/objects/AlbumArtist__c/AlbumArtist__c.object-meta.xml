@@ -156,8 +156,9 @@
     <gender>Masculine</gender>
     <label>AlbumArtist</label>
     <nameField>
+        <displayFormat>AA-{000000}</displayFormat>
         <label>AlbumArtist Name</label>
-        <type>Text</type>
+        <type>AutoNumber</type>
     </nameField>
     <pluralLabel>AlbumArtists</pluralLabel>
     <searchLayouts></searchLayouts>
