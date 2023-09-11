@@ -12,15 +12,11 @@
             </layoutItems>
             <layoutItems>
                 <behavior>Edit</behavior>
-                <field>SpotifyId__c</field>
-            </layoutItems>
-            <layoutItems>
-                <behavior>Edit</behavior>
                 <field>Url__c</field>
             </layoutItems>
             <layoutItems>
                 <behavior>Edit</behavior>
-                <field>ReleaseDate__c</field>
+                <field>Followers__c</field>
             </layoutItems>
             <layoutItems>
                 <behavior>Edit</behavior>
@@ -29,6 +25,10 @@
             <layoutItems>
                 <behavior>Edit</behavior>
                 <field>Popularity__c</field>
+            </layoutItems>
+            <layoutItems>
+                <behavior>Edit</behavior>
+                <field>SpotifyId__c</field>
             </layoutItems>
         </layoutColumns>
         <layoutColumns>
@@ -69,11 +69,11 @@
     </layoutSections>
     <relatedLists>
         <fields>NAME</fields>
-        <relatedList>AlbumArtist__c.Album__c</relatedList>
+        <relatedList>TrackArtist__c.Artist__c</relatedList>
     </relatedLists>
     <relatedLists>
         <fields>NAME</fields>
-        <relatedList>Track__c.Album__c</relatedList>
+        <relatedList>AlbumArtist__c.Artist__c</relatedList>
     </relatedLists>
     <showEmailCheckbox>false</showEmailCheckbox>
     <showHighlightsPanel>false</showHighlightsPanel>

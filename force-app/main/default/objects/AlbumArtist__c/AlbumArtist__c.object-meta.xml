@@ -154,12 +154,13 @@
     <enableStreamingApi>true</enableStreamingApi>
     <externalSharingModel>ControlledByParent</externalSharingModel>
     <gender>Masculine</gender>
-    <label>Track</label>
+    <label>AlbumArtist</label>
     <nameField>
-        <label>Track Name</label>
-        <type>Text</type>
+        <displayFormat>AA-{000000}</displayFormat>
+        <label>AlbumArtist Name</label>
+        <type>AutoNumber</type>
     </nameField>
-    <pluralLabel>Tracks</pluralLabel>
+    <pluralLabel>AlbumArtists</pluralLabel>
     <searchLayouts></searchLayouts>
     <sharingModel>ControlledByParent</sharingModel>
     <visibility>Public</visibility>
