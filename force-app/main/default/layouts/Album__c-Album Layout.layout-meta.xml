@@ -30,6 +30,10 @@
                 <behavior>Edit</behavior>
                 <field>Popularity__c</field>
             </layoutItems>
+            <layoutItems>
+                <behavior>Readonly</behavior>
+                <field>TotalTracks__c</field>
+            </layoutItems>
         </layoutColumns>
         <layoutColumns>
             <layoutItems>
