@@ -79,6 +79,7 @@
     </relatedLists>
     <relatedLists>
         <fields>NAME</fields>
+        <fields>DurationMs__c</fields>
         <relatedList>Track__c.Album__c</relatedList>
     </relatedLists>
     <showEmailCheckbox>false</showEmailCheckbox>
