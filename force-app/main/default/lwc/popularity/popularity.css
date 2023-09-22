@@ -1,4 +1,3 @@
 :host {
-    display: block;
-    --slds-c-alert-color-background: var(--titleColor);
-  }
+  --slds-c-alert-color-background: var(--titleColor);
+}
