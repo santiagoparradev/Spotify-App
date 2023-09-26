@@ -152,15 +152,16 @@
     <enableSearch>false</enableSearch>
     <enableSharing>true</enableSharing>
     <enableStreamingApi>true</enableStreamingApi>
-    <externalSharingModel>ReadWrite</externalSharingModel>
-    <gender>Masculine</gender>
-    <label>Playlist</label>
+    <externalSharingModel>ControlledByParent</externalSharingModel>
+    <gender>Feminine</gender>
+    <label>Playlist Track</label>
     <nameField>
-        <label>Playlist Name</label>
-        <type>Text</type>
+        <displayFormat>PL{00000}</displayFormat>
+        <label>PlaylistTrack Name</label>
+        <type>AutoNumber</type>
     </nameField>
-    <pluralLabel>Playlists</pluralLabel>
+    <pluralLabel>PlaylistTracks</pluralLabel>
     <searchLayouts />
-    <sharingModel>ReadWrite</sharingModel>
+    <sharingModel>ControlledByParent</sharingModel>
     <visibility>Public</visibility>
 </CustomObject>
