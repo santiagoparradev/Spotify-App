@@ -1,7 +1,7 @@
 public class SimplefiedPlaylistObject {
     public Boolean collaborative;
     public String description;
-    //public List<External_urls> external_urls;
+    public List<External_urls> external_urls;
     public String id;
     //public array < >images;
     public String name;

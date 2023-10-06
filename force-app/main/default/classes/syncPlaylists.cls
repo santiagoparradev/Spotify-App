@@ -1,50 +1,48 @@
-public class syncPlaylists {
+public class SyncPlaylists {
     
     public static void syncPlaylist(List<ClientCredential__c> credentials) {
 
+        List<Playlist__c> forInsert = new List<Playlist__c>();
         for (ClientCredential__c cred : credentials) {
             Http http = new Http();
             HttpRequest request = new HttpRequest();
             request.setEndpoint('https://accounts.spotify.com/api/token');
             request.setMethod('POST');
             request.setHeader('Content-Type', 'application/x-www-form-urlencoded');
-            request.setHeader('Content-Length','119');
-            request.setHeader('Host','accounts.spotify.com');
             String payload = 'grant_type=client_credentials'
-                + '&client_id='+ cred.ClientId__c 
+                + '&client_id=' + cred.ClientId__c 
                 + '&client_secret=' + cred.ClientSecret__c; 
-            system.debug('esto es payload ' + payload);
             request.setBody(payload);
             HttpResponse response = http.send(request);
-            System.debug(response);
             
             if(response.getStatusCode() == 200) {
-                
-                System.debug(response);
-                // Deserialize the JSON string into collections of primitive data types.
-                Map<String, Object> tokenResult = (Map<String, Object>) JSON.deserializeUntyped(response.getBody());
-                String token = (String) tokenResult.get('access_token');
-                system.debug(token);
-                
+
+                TokenResponse tokenResult = TokenResponse.parse(response.getBody());
             	HttpRequest playlist = new HttpRequest();
-                playlist.setEndpoint('https://api.spotify.com/v1/users/'+cred.SpotifyUserId__c+'/playlists');
+                playlist.setEndpoint('https://api.spotify.com/v1/users/' + cred.SpotifyUserId__c + '/playlists');
             	playlist.setMethod('GET');
-            	playlist.setHeader('Authorization','Bearer ' + token);
-                playlist.setHeader('Host','api.spotify.com');
-            	HttpResponse playlistResponse = http.send(playlist);
-            	System.debug(playlistResponse);
+            	playlist.setHeader('Authorization', 'Bearer ' + tokenResult.access_token);
+                playlist.setHeader('Host', 'api.spotify.com');	
+            	HttpResponse playlistRes = http.send(playlist);
                 
-            	if(playlistResponse.getStatusCode() == 200) {
+            	if(playlistRes.getStatusCode() == 200) {
                         
-                	Map<String, Object> InfoResult = (Map<String, Object>) JSON.deserializeUntyped(playlistResponse.getBody());
-               		list<Object> InfoPlaylist = (list<Object>) InfoResult.get('items');
-                    Map<String, Object> Primero = (Map<String, Object>)InfoPlaylist[0];
-                    system.debug(InfoPlaylist[0]);
-                    system.debug(Primero);
-                    system.debug(Primero.get('name'));
-                       
+                	PlaylistResponse playlistResult = PlaylistResponse.parse(playlistRes.getBody());
+                    for (SimplefiedPlaylistObject singlePlaylistResponse : playlistResult.items) {
+                        Playlist__c record = new Playlist__c(
+                            SpotifyId__c = singlePlaylistResponse.id,
+                            Name = singlePlaylistResponse.name,
+                            Description__c = singlePlaylistResponse.description,
+                            Collaborative__c = singlePlaylistResponse.collaborative,
+                            //Public__c = singlePlaylistResponse.public,
+                            //url__c = singlePlaylistResponse.external_urls,
+                            followers__c = singlePlaylistResponse.followers
+                        );
+                        forInsert.add(record);
+                    }
             	}
         	}
 		}
+        insert forInsert;
     }    
 }
