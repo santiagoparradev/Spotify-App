@@ -37,6 +37,7 @@
     <tabs>Artist__c</tabs>
     <tabs>Playlist__c</tabs>
     <tabs>Album__c</tabs>
+    <tabs>ClientCredential__c</tabs>
     <uiType>Lightning</uiType>
     <utilityBar>Spotify_UtilityBar</utilityBar>
 </CustomApplication>
