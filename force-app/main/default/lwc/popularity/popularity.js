@@ -13,8 +13,10 @@ export default class Popularity extends LightningElement {
   trackRecord({ data }) {
     if (data) {
       const popularity = getFieldValue(data, POPULARITY_FIELD);
-      let color = "#40f702";
-      if (popularity <= 30) {
+      let color = null;
+      if (popularity == null) {
+        this.message = null;
+      } else if (popularity <= 30) {
         color = "#d62023";
         this.message = "this song is bad according to most people";
       } else if (popularity <= 50) {
@@ -25,6 +27,7 @@ export default class Popularity extends LightningElement {
         this.message = "great song";
       } else {
         this.message = "this song is fire";
+        color = "#40f702";
       }
       document.documentElement.style.setProperty("--titleColor", color);
     }
