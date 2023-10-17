@@ -22,12 +22,10 @@ public class PlaylistImagesController {
             playlist.setMethod('GET');
             playlist.setHeader('Authorization', 'Bearer ' + tokenResult.access_token);	
             HttpResponse playlistRes = http.send(playlist);
-            System.debug(playlistRes);
             if(playlistRes.getStatusCode() == 200) {
                     
                 PlaylistIdResponse playlistResult = PlaylistIdResponse.parse(playlistRes.getBody());
                 String urlImage = playlistResult.images[0].url;
-                system.debug(urlImage);
                 resultUrl = urlImage;
             }
         }

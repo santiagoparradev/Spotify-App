@@ -24,7 +24,7 @@ public class SyncPlaylists {
             	playlist.setHeader('Authorization', 'Bearer ' + tokenResult.access_token);
                 playlist.setHeader('Host', 'api.spotify.com');	
             	HttpResponse playlistRes = http.send(playlist);
-                
+                System.debug(playlistRes);
             	if(playlistRes.getStatusCode() == 200) {
                         
                 	PlaylistResponse playlistResult = PlaylistResponse.parse(playlistRes.getBody());
@@ -37,6 +37,7 @@ public class SyncPlaylists {
                             //Public__c = singlePlaylistResponse.public,
                             //url__c = singlePlaylistResponse.external_urls,
                             followers__c = singlePlaylistResponse.followers
+                            //images__c
                         );
                         forInsert.add(record);
                     }
