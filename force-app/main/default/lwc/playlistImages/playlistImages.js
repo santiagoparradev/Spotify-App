@@ -5,7 +5,8 @@ import SPOTIFY_ID_FIELD from "@salesforce/schema/Playlist__c.SpotifyId__c";
 
 export default class PlaylistImages extends LightningElement {
   @api recordId;
-  messageUrl;
+  imageUrl;
+  error;
 
   @wire(getRecord, {
     recordId: "$recordId",
@@ -16,10 +17,10 @@ export default class PlaylistImages extends LightningElement {
       const spotifyPlaylistId = getFieldValue(data, SPOTIFY_ID_FIELD);
       obtenerDatos({ spotifyPlaylistId })
         .then((result) => {
-          this.messageUrl = result;
+          this.imageUrl = result;
         })
         .catch((error) => {
-          this.error = error;
+          this.error = error.body.message;
         });
     }
   }

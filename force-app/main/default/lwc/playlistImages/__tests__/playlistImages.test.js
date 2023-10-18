@@ -27,16 +27,18 @@ describe("c-playlist-images", () => {
     return Promise.resolve();
   }
 
-  it("ID the spotify", async () => {
-    obtenerDatos.mockResolvedValue("https://www.url.com");
+  it("the url expect is equal to string in tobe", async () => {
     // Arrange
+    obtenerDatos.mockResolvedValue("https://www.url.com");
     const element = createElement("c-playlist-images", {
       is: PlaylistImages
     });
     document.body.appendChild(element);
     const mock = { fields: { SpotifyId__c: { value: "123456" } } };
+    // Act
     getRecord.emit(mock);
     await flushPromises();
+    // Assert
     const urlImage = element.shadowRoot.querySelector("img");
     expect(urlImage.src).toBe("https://www.url.com");
   });

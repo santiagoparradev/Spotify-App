@@ -1,9 +1,10 @@
 @IsTest
-private class TestPlaylistImagesController {
-  @isTest
-  static void TestRequestToken() {
+private class PlaylistImagesControllerTest {
+
+  @IsTest
+  static void itShouldReturnSpotifyImageUrl() {
     // prepare data
-    Test.setMock(HttpCalloutMock.class, new TestTokenMock());
+    Test.setMock(HttpCalloutMock.class, new TokenMock());
     ClientCredential__c newCretentials = new ClientCredential__c(Name = 'nicolas');
     insert newCretentials;
     // test
@@ -14,19 +15,24 @@ private class TestPlaylistImagesController {
     Assert.isTrue(String.isNotBlank(url), 'url can not be blank');
   }
 
-  private class TestTokenMock implements HttpCalloutMock {
+  private class TokenMock implements HttpCalloutMock {
+
     public HTTPResponse respond(HTTPRequest request) {
+ 
       HttpResponse response = new HttpResponse();
-      response.setStatusCode(200);
+      response.setStatusCode(PlaylistImagesController.SUCCESS_STATUS_CODE);
       response.setHeader('Content-Type', 'application/json');
-      if(request.getEndpoint().contains('https://accounts.spotify.com/api/token')) {
+
+      if(request.getEndpoint().contains(PlaylistImagesController.TOKEN_ENDPOINT)) {
         TokenResponse token = new TokenResponse();
         token.access_token = '1111';
         response.setBody(JSON.serialize(token));
+
       } else {
         response.setBody('{"images":[{"url":"this is the url"}]}');
       }
-      return response; 
+
+      return response;  
     }
   }
 }
