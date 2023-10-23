@@ -1,17 +1,17 @@
 import { createElement } from "lwc";
-import PlaylistImages from "c/playlistImages";
+import getImages from "c/getImages";
 import { getRecord } from "lightning/uiRecordApi";
-import obtenerDatos from "@salesforce/apex/PlaylistImagesController.obtenerDatos";
+import findUrl from "@salesforce/apex/ImagesController.findUrl";
 
 jest.mock(
-  "@salesforce/apex/PlaylistImagesController.obtenerDatos",
+  "@salesforce/apex/ImagesController.findUrl",
   () => ({
     default: jest.fn()
   }),
   { virtual: true }
 );
 
-describe("c-playlist-images", () => {
+describe("c-getImages", () => {
   afterEach(() => {
     // The jsdom instance is shared across test cases in a single file so reset the DOM
     while (document.body.firstChild) {
@@ -29,12 +29,13 @@ describe("c-playlist-images", () => {
 
   it("the url expect is equal to string in tobe", async () => {
     // Arrange
-    obtenerDatos.mockResolvedValue("https://www.url.com");
-    const element = createElement("c-playlist-images", {
-      is: PlaylistImages
+    findUrl.mockResolvedValue("https://www.url.com");
+    const element = createElement("c-get-images", {
+      is: getImages
     });
     document.body.appendChild(element);
     const mock = { fields: { SpotifyId__c: { value: "123456" } } };
+
     // Act
     getRecord.emit(mock);
     await flushPromises();
