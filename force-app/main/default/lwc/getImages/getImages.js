@@ -4,8 +4,8 @@ import findUrl from "@salesforce/apex/ImagesController.findUrl";
 import SPOTIFY_ID_FIELD_PLAYLIST from "@salesforce/schema/Playlist__c.SpotifyId__c";
 import SPOTIFY_ID_FIELD_ALBUM from "@salesforce/schema/Album__c.SpotifyId__c";
 import SPOTIFY_ID_FIELD_ARTIST from "@salesforce/schema/Artist__c.SpotifyId__c";
-import ALBUM_OBJECT from "@salesforce/schema/Playlist__c";
-import PLAYLIST_OBJECT from "@salesforce/schema/Album__c";
+import ALBUM_OBJECT from "@salesforce/schema/Album__c";
+import PLAYLIST_OBJECT from "@salesforce/schema/Playlist__c";
 import ARTIST_OBJECT from "@salesforce/schema/Artist__c";
 
 const ALL_FIELDS = [
@@ -14,9 +14,9 @@ const ALL_FIELDS = [
   SPOTIFY_ID_FIELD_ARTIST
 ];
 const ENDPOINT_BY_OBJECT = {
-  [ALBUM_OBJECT.Name]: "albums",
-  [PLAYLIST_OBJECT.Name]: "playlists",
-  [ARTIST_OBJECT.Name]: "artists"
+  [ALBUM_OBJECT.objectApiName]: "albums",
+  [PLAYLIST_OBJECT.objectApiName]: "playlists",
+  [ARTIST_OBJECT.objectApiName]: "artists"
 };
 
 export default class GetImages extends LightningElement {
