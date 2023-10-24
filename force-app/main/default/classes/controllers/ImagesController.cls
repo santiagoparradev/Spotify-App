@@ -1,11 +1,10 @@
-public class PlaylistImagesController {
+public class ImagesController {
 
     public static String TOKEN_ENDPOINT = 'https://accounts.spotify.com/api/token';
-    private static String PLAYLIST_ENDPOINT = 'https://api.spotify.com/v1/playlists/';
     public static Integer SUCCESS_STATUS_CODE = 200;
 
     @AuraEnabled(cacheable=true)
-    public static String obtenerDatos(String spotifyPlaylistId) {
+    public static String findUrl(String objectApiNameSpotifyId, String endPoint) {
         
         try {  
             String resultUrl;
@@ -25,15 +24,15 @@ public class PlaylistImagesController {
             
             if(response.getStatusCode() == SUCCESS_STATUS_CODE) {
                 TokenResponse tokenResult = TokenResponse.parse(response.getBody());
-                HttpRequest playlistRequest = new HttpRequest();
-                playlistRequest.setEndpoint(PLAYLIST_ENDPOINT + spotifyPlaylistId);
-                playlistRequest.setMethod('GET');
-                playlistRequest.setHeader('Authorization', 'Bearer ' + tokenResult.access_token);	
-                HttpResponse playlistRes = http.send(playlistRequest);
+                HttpRequest request = new HttpRequest();
+                request.setEndpoint(endPoint + objectApiNameSpotifyId); 
+                request.setMethod('GET');
+                request.setHeader('Authorization', 'Bearer ' + tokenResult.access_token);	
+                HttpResponse resultRequest = http.send(request);
 
-                if(playlistRes.getStatusCode() == SUCCESS_STATUS_CODE) {            
-                    PlaylistResponse playlistResult = PlaylistResponse.parse(playlistRes.getBody());
-                    String urlImage = playlistResult.images[0].url;
+                if(resultRequest.getStatusCode() == SUCCESS_STATUS_CODE) {            
+                    BaseResponse result = BaseResponse.parse(resultRequest.getBody());
+                    String urlImage = result.images[0].url;
                     resultUrl = urlImage;
                 }
             }
