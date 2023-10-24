@@ -31,8 +31,8 @@ public class ImagesController {
                 HttpResponse resultRequest = http.send(request);
 
                 if(resultRequest.getStatusCode() == SUCCESS_STATUS_CODE) {            
-                    BaseResponse Result = BaseResponse.parse(resultRequest.getBody());
-                    String urlImage = Result.images[0].url;
+                    BaseResponse result = BaseResponse.parse(resultRequest.getBody());
+                    String urlImage = result.images[0].url;
                     resultUrl = urlImage;
                 }
             }

@@ -4,6 +4,9 @@ import findUrl from "@salesforce/apex/ImagesController.findUrl";
 import SPOTIFY_ID_FIELD_PLAYLIST from "@salesforce/schema/Playlist__c.SpotifyId__c";
 import SPOTIFY_ID_FIELD_ALBUM from "@salesforce/schema/Album__c.SpotifyId__c";
 import SPOTIFY_ID_FIELD_ARTIST from "@salesforce/schema/Artist__c.SpotifyId__c";
+import ALBUM_OBJECT from "@salesforce/schema/Playlist__c";
+import PLAYLIST_OBJECT from "@salesforce/schema/Album__c";
+import ARTIST_OBJECT from "@salesforce/schema/Artist__c";
 
 const ALL_FIELDS = [
   SPOTIFY_ID_FIELD_PLAYLIST,
@@ -11,9 +14,9 @@ const ALL_FIELDS = [
   SPOTIFY_ID_FIELD_ARTIST
 ];
 const ENDPOINT_BY_OBJECT = {
-  Album__c: "albums",
-  Playlist__c: "playlists",
-  Artist__c: "artists"
+  [ALBUM_OBJECT.Name]: "albums",
+  [PLAYLIST_OBJECT.Name]: "playlists",
+  [ARTIST_OBJECT.Name]: "artists"
 };
 
 export default class GetImages extends LightningElement {
@@ -26,12 +29,6 @@ export default class GetImages extends LightningElement {
     let spotifyId = ALL_FIELDS.find(
       (apiName) => apiName.objectApiName === this.objectApiName
     )?.fieldApiName;
-    // spread let spotifyId = ALL_FIELDS.find(({objectApliName})=== this.objectApiName).fieldApiName;
-    // for(let apiName of ALL_FIELDS) {
-    //   if(this.objectApiName === apiName.objectApiName) {
-    //     spotifyId = apiName.fieldApiName;
-    //   }
-    // }
     return this.objectApiName + "." + spotifyId;
   }
 
