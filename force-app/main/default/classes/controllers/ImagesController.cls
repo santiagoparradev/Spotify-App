@@ -8,9 +8,9 @@ public class ImagesController {
         
         try {  
             String resultUrl;
-            ClientCredential__c credentials = [SELECT ClientId__c, ClientSecret__c, SpotifyUserId__c 
+            ClientCredential__c credentials = [SELECT ClientId__c, ClientSecret__c, SpotifyUserId__c
                                                 FROM ClientCredential__c 
-                                                WHERE Name = 'nicolas'];
+                                                WHERE User__c =:UserInfo.getUserId()];                                    
             Http http = new Http();
             HttpRequest tokenRequest = new HttpRequest();
             tokenRequest.setEndpoint(TOKEN_ENDPOINT);

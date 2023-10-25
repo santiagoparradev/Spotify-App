@@ -5,7 +5,7 @@ private class ImagesControllerTest {
   static void itShouldReturnSpotifyImageUrl() {
     // prepare data
     Test.setMock(HttpCalloutMock.class, new TokenMock());
-    ClientCredential__c newCretentials = new ClientCredential__c(Name = 'nicolas');
+    ClientCredential__c newCretentials = new ClientCredential__c(User__c = UserInfo.getUserId());
     insert newCretentials;
     // test
     Test.startTest();
