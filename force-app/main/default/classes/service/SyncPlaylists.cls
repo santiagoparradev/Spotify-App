@@ -3,6 +3,7 @@ public class SyncPlaylists {
     public static String TOKEN_ENDPOINT = 'https://accounts.spotify.com/api/token';
     public static Integer SUCCESS_STATUS_CODE = 200;
     private static Integer LIMIT_PLAYLIST = 50;
+    private static String PLAYLIST_ENDPOINT = 'https://api.spotify.com/v1/users/{0}/playlists?limit={1}&offset={2}';
 
     public static void syncPlaylist(List<ClientCredential__c> credentials) {
 
@@ -27,7 +28,7 @@ public class SyncPlaylists {
 
                     TokenResponse tokenResult = TokenResponse.parse(response.getBody());
                     HttpRequest playlist = new HttpRequest();
-                    playlist.setEndpoint('https://api.spotify.com/v1/users/' + cred.SpotifyUserId__c + '/playlists?limit=' + LIMIT_PLAYLIST +'&offset=' + cont);
+                    playlist.setEndpoint(String.format(PLAYLIST_ENDPOINT, new List<Object>{cred.SpotifyUserId__c, LIMIT_PLAYLIST, cont}));
                     playlist.setMethod('GET');
                     playlist.setHeader('Authorization', 'Bearer ' + tokenResult.access_token);
                     playlist.setHeader('Host', 'api.spotify.com');
@@ -53,6 +54,7 @@ public class SyncPlaylists {
                 } while (cont < playlistResult.total);
         	}
 		}
-        insert forInsert;
+        
+        upsert forInsert SpotifyId__c;
     }    
 }
