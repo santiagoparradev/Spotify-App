@@ -5,13 +5,13 @@ private class SyncPlaylistsTest {
     static void SyncPlaylistsTest() {
         // prepare data
         Test.setMock(HttpCalloutMock.class, new TokenMock());
-        List<ClientCredential__c> newCredentials = new List<ClientCredential__c>{new ClientCredential__c()};
+        List<ClientCredential__c> newCredentials = new List<ClientCredential__c>{new ClientCredential__c(ClientId__c = 'ClientId__c', ClientSecret__c = 'ClientSecret__c', SpotifyUserId__c = 'SpotifyUserId__c')};
 
         insert newCredentials;
         // test
         Test.startTest();
-        PlaylistBatch BatchCred = new PlaylistBatch();
-        DataBase.executeBatch(BatchCred);
+        PlaylistBatch creds = new PlaylistBatch();
+        DataBase.executeBatch(creds);
         Test.stopTest();
         //assert
         List<Playlist__c> playlist = [SELECT Name FROM Playlist__c WHERE Name = 'name'];
@@ -37,6 +37,9 @@ private class SyncPlaylistsTest {
                 playlist.Name = 'name';
                 playlist.description = 'description';
                 playlist.publicField = true;
+                String playlistId = request.getEndpoint().substringAfter('offset=');               
+                playlist.id = playlistId;
+
                 PlaylistResponse playlistRes = new PlaylistResponse();
                 playlistRes.total = 2;
                 playlistRes.items = playlistList;
