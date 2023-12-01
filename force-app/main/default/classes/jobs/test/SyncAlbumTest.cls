@@ -4,7 +4,7 @@ private class SyncAlbumTest {
     static void syncAlbumTest() {
         // prepare data
         Test.setMock(HttpCalloutMock.class, new TokenMock());
-        List<ClientCredential__c> newCredentials = new List<ClientCredential__c>{new ClientCredential__c(ClientId__c = 'ClientId__c', ClientSecret__c = 'ClientSecret__c', SpotifyUserId__c = 'SpotifyUserId__c', User__c =	'0057i00000BMXZgAAP')};
+        List<ClientCredential__c> newCredentials = new List<ClientCredential__c>{new ClientCredential__c(ClientId__c = 'ClientId__c', ClientSecret__c = 'ClientSecret__c', SpotifyUserId__c = 'SpotifyUserId__c', User__c = UserInfo.getUserId())};
 
         insert newCredentials;
         // test
@@ -22,10 +22,10 @@ private class SyncAlbumTest {
         public HTTPResponse respond(HTTPRequest request) {
 
             HttpResponse response = new HttpResponse();
-            response.setStatusCode(SyncAlbum.SUCCESS_STATUS_CODE);
+            response.setStatusCode(SpotifyApiStuff.SUCCESS_STATUS_CODE);
             response.setHeader('Content-Type', 'application/json');
 
-            if(request.getEndpoint().contains(SyncAlbum.TOKEN_ENDPOINT)) {
+            if(request.getEndpoint().contains(SpotifyApiStuff.TOKEN_ENDPOINT)) {
                 TokenResponse token = new TokenResponse();
                 token.access_token = '1111';
                 response.setBody(JSON.serialize(token));
@@ -43,8 +43,8 @@ private class SyncAlbumTest {
                 
                 
             } else if(request.getEndpoint().contains('tracks')) {
-                List<ItemsTracks> itemsTracksList = new List<ItemsTracks>();
-                ItemsTracks itemtrack = new ItemsTracks();
+                List<ItemTrack> itemsTracksList = new List<ItemTrack>();
+                ItemTrack itemtrack = new ItemTrack();
                 SimplefieldTracksObject track = new SimplefieldTracksObject();
                 track.id = 'trackId';
                 itemtrack.track = track;
@@ -59,7 +59,7 @@ private class SyncAlbumTest {
             } else if(request.getEndpoint().contains('albums')) {
                 List<SimplefieldAlbumsObject> albumstList = new List<SimplefieldAlbumsObject>();
                 SimplefieldAlbumsObject albums = new SimplefieldAlbumsObject();
-                list<String> genres = new list<String>();
+                List<String> genres = new List<String>();
                 albums.name = 'album name';
                 albums.genres = genres;
                 albums.id = 'albumId';

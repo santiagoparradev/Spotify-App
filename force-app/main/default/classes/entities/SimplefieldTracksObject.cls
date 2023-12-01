@@ -1,7 +1,6 @@
 public class SimplefieldTracksObject {
     public SimplefieldAlbumsObject album;
-    //public list<ArtistResponse> artists;
-    public list<String> available_markets;
+    public List<String> available_markets;
     public Integer disc_number;
     public Integer duration_ms;
     public Boolean explicit;
