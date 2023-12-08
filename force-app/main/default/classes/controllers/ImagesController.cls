@@ -1,19 +1,24 @@
 public class ImagesController {
 
-    public static String TOKEN_ENDPOINT = 'https://accounts.spotify.com/api/token';
-    public static Integer SUCCESS_STATUS_CODE = 200;
-
     @AuraEnabled(cacheable=true)
     public static String findUrl(String objectApiNameSpotifyId, String endPoint) {
         
-        try {  
+        try { 
             String resultUrl;
-            ClientCredential__c credentials = [SELECT ClientId__c, ClientSecret__c, SpotifyUserId__c
-                                                FROM ClientCredential__c 
-                                                WHERE User__c =:UserInfo.getUserId()];                                    
+            ClientCredential__c credentials = [
+            SELECT 
+                ClientId__c, 
+                ClientSecret__c, 
+                SpotifyUserId__c
+            FROM 
+                ClientCredential__c 
+            WHERE 
+                User__c =:UserInfo.getUserId()
+            ];
+                                           
             Http http = new Http();
             HttpRequest tokenRequest = new HttpRequest();
-            tokenRequest.setEndpoint(TOKEN_ENDPOINT);
+            tokenRequest.setEndpoint(SpotifyApiHttpClient.BASE_TOKEN_ENDPOINT + '/token');
             tokenRequest.setMethod('POST');
             tokenRequest.setHeader('Content-Type', 'application/x-www-form-urlencoded');
             String payload = 'grant_type=client_credentials'
@@ -22,7 +27,8 @@ public class ImagesController {
             tokenRequest.setBody(payload);
             HttpResponse response = http.send(tokenRequest);
             
-            if(response.getStatusCode() == SUCCESS_STATUS_CODE) {
+            if (response.getStatusCode() == SpotifyApiHttpClient.SUCCESS_STATUS_CODE) {
+
                 TokenResponse tokenResult = TokenResponse.parse(response.getBody());
                 HttpRequest request = new HttpRequest();
                 request.setEndpoint(endPoint + objectApiNameSpotifyId); 
@@ -30,7 +36,8 @@ public class ImagesController {
                 request.setHeader('Authorization', 'Bearer ' + tokenResult.access_token);	
                 HttpResponse resultRequest = http.send(request);
 
-                if(resultRequest.getStatusCode() == SUCCESS_STATUS_CODE) {            
+                if (resultRequest.getStatusCode() == SpotifyApiHttpClient.SUCCESS_STATUS_CODE) {
+
                     BaseResponse result = BaseResponse.parse(resultRequest.getBody());
                     String urlImage = result.images[0].url;
                     resultUrl = urlImage;

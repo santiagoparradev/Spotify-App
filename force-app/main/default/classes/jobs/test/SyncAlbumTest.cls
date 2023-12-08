@@ -1,9 +1,10 @@
 @IsTest                                                        
-private class SyncAlbumTest {                                  
+private class SyncAlbumTest {   
+                                   
     @IsTest                                                    
     static void syncAlbumTest() {                              
         // prepare data                                        
-        Test.setMock(HttpCalloutMock.class, new TokenMock());       
+        Test.setMock(HttpCalloutMock.class, new Mock());       
         List<ClientCredential__c> newCredentials = new List<ClientCredential__c>{
             new ClientCredential__c(
                 ClientId__c = 'ClientId__c', 
@@ -24,34 +25,31 @@ private class SyncAlbumTest {
         Assert.areEqual(1, albums.size(), 'is should add one album');                  
     }                                                                                 
                                                                                       
-    private class TokenMock implements HttpCalloutMock {                              
+    private class Mock implements HttpCalloutMock {                              
                                                                                       
-        public HTTPResponse respond(HTTPRequest request) {                            
+        public HTTPResponse respond(HTTPRequest httpRequest) {                            
                                                                                       
             HttpResponse response = new HttpResponse();                               
             response.setStatusCode(SpotifyApiHttpClient.SUCCESS_STATUS_CODE);              
-            response.setHeader('Content-Type', 'application/json');                   
+            response.setHeader('Content-Type', 'application/json');
+            String request = httpRequest.getEndpoint();         
                                                                     
-            if (request.getEndpoint().contains(
-                SpotifyApiHttpClient.BASE_TOKEN_ENDPOINT 
-                + '/token')) {
+            if (request.contains(SpotifyApiHttpClient.BASE_TOKEN_ENDPOINT + '/token')) {
                 TokenResponse token = new TokenResponse();
                 token.access_token = '1111';            
                 response.setBody(JSON.serialize(token));
                                                         
-            } else if (request.getEndpoint().contains('playlists?limit=')) {
+            } else if (request.contains('playlists?limit=')) {
                 List<SimplefiedPlaylistObject> playlistList = new List<SimplefiedPlaylistObject>();
-                SimplefiedPlaylistObject playlist = new SimplefiedPlaylistObject();
-                String playlistId = request.getEndpoint().substringAfter('offset=');               
-                playlist.id = playlistId;               
+                SimplefiedPlaylistObject playlist = new SimplefiedPlaylistObject();          
+                playlist.id = request.substringAfter('offset=');               
                 playlistList.add(playlist);             
                 PlaylistResponse playlistRes = new PlaylistResponse();
                 playlistRes.total = 2;                  
                 playlistRes.items = playlistList;       
                 response.setBody(JSON.serialize(playlistRes));
                 
-                
-            } else if (request.getEndpoint().contains('tracks')) {
+            } else if (request.contains('tracks')) {
                 List<ItemTrack> itemsTracksList = new List<ItemTrack>();
                 ItemTrack itemtrack = new ItemTrack();
                 SimplefieldTracksObject track = new SimplefieldTracksObject();
@@ -65,7 +63,7 @@ private class SyncAlbumTest {
                 tracksRes.items = itemsTracksList;       
                 response.setBody(JSON.serialize(tracksRes));
                                                          
-            } else if (request.getEndpoint().contains('albums')) {
+            } else if (request.contains('albums')) {
                 List<SimplefieldAlbumsObject> albumstList = new List<SimplefieldAlbumsObject>();
                 SimplefieldAlbumsObject albums = new SimplefieldAlbumsObject();
                 List<String> genres = new List<String>();

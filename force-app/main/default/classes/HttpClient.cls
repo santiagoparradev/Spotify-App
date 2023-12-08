@@ -14,73 +14,73 @@ public virtual class HttpClient {
   
     public virtual HttpClient setEndpoint(String endPoint, String path) {
   
-      if (String.isBlank(endpoint)) {
-        throw new HttpClientException(END_POINT_REQUIRED_ERROR_MESSAGE);
-      }
+        if (String.isBlank(endpoint)) {
+            throw new HttpClientException(END_POINT_REQUIRED_ERROR_MESSAGE);
+        }
   
-      this.endPoint = endpoint + (String.isNotBlank(path) ? path : '');
-      request.setEndpoint(this.endPoint);
-      return this;
+        this.endPoint = endpoint + (String.isNotBlank(path) ? path : '');
+        request.setEndpoint(this.endPoint);
+        return this;
     }
   
     public virtual HttpClient setMethod(Method value) {
-      return setMethod(value.name());
+        return setMethod(value.name());
     }
   
     public virtual HttpClient setMethod(String value) {
-      request.setMethod(value);
-      method = value;
-      return this;
+        request.setMethod(value);
+        method = value;
+        return this;
     }
   
     public virtual HttpClient setBody(String body) {
   
-      if (String.isNotBlank(body)) {
-        request.setBody(body);
-      }
+        if (String.isNotBlank(body)) {
+            request.setBody(body);
+        }
   
-      return this;
+        return this;
     }
   
     public virtual HttpClient setBody(Blob body) {
   
-      if (body != null) {
-        request.setBodyAsBlob(body);
-      }
+        if (body != null) {
+            request.setBodyAsBlob(body);
+        }
   
-      return this;
+        return this;
     }
   
     public virtual HttpClient send() {
   
-      if (String.isBlank(method)) {
-        throw new HttpClientException('Method is required.');
-      }
+        if (String.isBlank(method)) {
+            throw new HttpClientException('Method is required.');
+        }
   
-      if (String.isBlank(endPoint)) {
-        throw new HttpClientException(END_POINT_REQUIRED_ERROR_MESSAGE);
-      }
+        if (String.isBlank(endPoint)) {
+            throw new HttpClientException(END_POINT_REQUIRED_ERROR_MESSAGE);
+        }
   
-      response = new Http().send(request);
-      return this;
+        response = new Http().send(request);
+        return this;
     }
   
     public virtual HttpResponse getResponse() {
-      return response;
+        return response;
     }
   
     public virtual HttpClient setHeader(String key, String value) {
   
-      if (String.isNotBlank(key)) {
-        request.setHeader(key, value);
-      }
+        if (String.isNotBlank(key)) {
+            request.setHeader(key, value);
+        }
   
-      return this;
+        return this;
     }
   
     public virtual HttpClient setTimeOut(Integer timeOut) {
-      request.setTimeout(timeOut);
-      return this;
+        request.setTimeout(timeOut);
+        return this;
     }
   
     public class HttpClientException extends Exception {}
