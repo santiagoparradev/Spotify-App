@@ -1,14 +1,14 @@
-public class PlaylistBatch implements Database.Batchable<SObject>, Database.AllowsCallouts {
+public class AlbumBatch implements Database.Batchable<SObject>, Database.AllowsCallouts {
 
     public Database.QueryLocator start(Database.BatchableContext bc) {
         return Database.getQueryLocator([
-            SELECT 
+            SELECT
                 ClientId__c,
                 ClientSecret__c,
                 SpotifyUserId__c
-            FROM 
+            FROM
                 ClientCredential__c
-            WHERE 
+            WHERE
                 ClientId__c != NULL
                 AND ClientSecret__c != NULL
                 AND SpotifyUserId__c != NULL
@@ -16,7 +16,7 @@ public class PlaylistBatch implements Database.Batchable<SObject>, Database.Allo
     }
 
     public void execute(Database.BatchableContext bc, List<ClientCredential__c> creds) {
-        SyncPlaylist.syncPlaylist(creds);
+        SyncAlbum.syncAlbum(creds);
     }
 
     public void finish(Database.BatchableContext bc) {}

@@ -1,4 +1,5 @@
 public class SimplefiedPlaylistObject {
+
     public Boolean collaborative;
     public String description;
     public ExternalUrls external_urls;
