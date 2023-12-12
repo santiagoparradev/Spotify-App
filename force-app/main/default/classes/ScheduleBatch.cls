@@ -6,6 +6,8 @@ public class ScheduleBatch  implements Schedulable {
         Database.executeBatch(batch);
         AlbumBatch albumBatch = new AlbumBatch(); 
         Database.executeBatch(albumBatch);
+        TrackBatch trackBatch = new TrackBatch(); 
+        Database.executeBatch(TrackBatch);
     }
 
     public static void SchedulerMethod() {
