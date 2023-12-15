@@ -77,7 +77,11 @@ public class SyncArtist {
                 TrackResponse tracks = TrackResponse.parse(trackRes.getBody());
 
                 for (ItemTrack item : tracks.items) {
-                    artistIds.add(item.track.artists[0].id);   
+                    SimplefieldTracksObject itemTrack = item.track;
+
+                    for (SimplefieldArtistObject artist : itemTrack.artists) {
+                        artistIds.add(artist.id);
+                    }
                 }
             }
             cont += playlists.items.size();
