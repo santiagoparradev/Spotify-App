@@ -8,6 +8,8 @@ public class ScheduleBatch  implements Schedulable {
         Database.executeBatch(albumBatch);
         TrackBatch trackBatch = new TrackBatch(); 
         Database.executeBatch(TrackBatch);
+        ArtistBatch artistBatch = new ArtistBatch(); 
+        Database.executeBatch(artistBatch);
     }
 
     public static void SchedulerMethod() {
