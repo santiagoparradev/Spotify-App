@@ -61,4 +61,17 @@ public class SpotifyApiHttpClient extends HttpClient {
         .send()
         .getResponse();
     }
+
+    public static HttpResponse getArtist(String token, Set<String> artistIds) {
+    	return new HttpClient()
+        .setEndpoint(
+        	SPOTIFY_HTTPS, 
+        	String.format('/artists?ids={0}', new List<Object>{String.join(artistIds, ',')})
+        )
+        .setMethod(HttpClient.Method.GET)
+        .setHeader('Authorization', 'Bearer ' + token)
+        .setHeader('Host', 'api.spotify.com')
+        .send()
+        .getResponse();
+    }
 }
