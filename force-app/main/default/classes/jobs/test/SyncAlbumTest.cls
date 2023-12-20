@@ -71,9 +71,9 @@ private class SyncAlbumTest {
                 albums.genres = genres;                  
                 albums.id = 'albumId';                   
                 albumstList.add(albums);                 
-                AlbumResponse albumRes = new AlbumResponse();
-                albumRes.albums = albumstList;           
-                response.setBody(JSON.serialize(albumRes));
+                AlbumResponse AlbumRes = new AlbumResponse();
+                AlbumRes.albums = albumstList;           
+                response.setBody(JSON.serialize(AlbumRes));
             }                                            
                                                          
             return response;                             
