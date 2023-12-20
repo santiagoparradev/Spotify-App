@@ -74,4 +74,14 @@ public class SpotifyApiHttpClient extends HttpClient {
             .send()
             .getResponse();
     }
+
+    public static HttpResponse getImages(String endPoint, String objectApiNameSpotifyId, String token) {
+    	return new HttpClient()
+            .setEndpoint(endPoint, objectApiNameSpotifyId)
+            .setMethod(HttpClient.Method.GET)
+            .setHeader('Authorization', 'Bearer ' + token)
+            .setHeader('Host', 'api.spotify.com')
+            .send()
+            .getResponse();
+    }
 }
