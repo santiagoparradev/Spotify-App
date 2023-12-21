@@ -1,7 +1,7 @@
 public class ImagesController {
 
     @AuraEnabled(cacheable=true)
-    public static List<String> findUrl(String objectApiNameSpotifyId, String endPoint) {
+    public static List<String> findUrl(String recordSpotifyId, String endPoint) {
 
         try { 
             List<String> resultUrl = new List<String>();
@@ -27,7 +27,7 @@ public class ImagesController {
 
                 HttpResponse resultRequest = SpotifyApiHttpClient.getImages(
                     endPoint,
-                    objectApiNameSpotifyId,
+                    recordSpotifyId,
                     tokenResult.access_token
                 );
 

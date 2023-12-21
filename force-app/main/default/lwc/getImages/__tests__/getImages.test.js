@@ -49,9 +49,9 @@ describe("c-getImages", () => {
     const urlImages = element.shadowRoot.querySelectorAll(
       "lightning-carousel-image"
     );
-    //expect(urlImage.src).toBe("https://www.url.com");
+
     expect(urlImages.length).toBe(urls.length);
-    // Verificar que cada imagen tenga la URL esperada
+
     urlImages.forEach((urlImage, index) => {
       expect(urlImage.src).toBe(urls[index]);
     });
