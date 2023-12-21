@@ -1,11 +1,11 @@
 public class ImagesController {
 
     @AuraEnabled(cacheable=true)
-    public static String findUrl(String objectApiNameSpotifyId, String endPoint) {
-        
+    public static List<String> findUrl(String recordSpotifyId, String endPoint) {
+
         try { 
-            String resultUrl;
-            ClientCredential__c credentials = [
+            List<String> resultUrl = new List<String>();
+            ClientCredential__c cred = [
             SELECT 
                 ClientId__c, 
                 ClientSecret__c, 
@@ -15,39 +15,36 @@ public class ImagesController {
             WHERE 
                 User__c =:UserInfo.getUserId()
             ];
-                                           
-            Http http = new Http();
-            HttpRequest tokenRequest = new HttpRequest();
-            tokenRequest.setEndpoint(SpotifyApiHttpClient.BASE_TOKEN_ENDPOINT + '/token');
-            tokenRequest.setMethod('POST');
-            tokenRequest.setHeader('Content-Type', 'application/x-www-form-urlencoded');
-            String payload = 'grant_type=client_credentials'
-                + '&client_id=' + credentials.ClientId__c
-                + '&client_secret=' + credentials.ClientSecret__c; 
-            tokenRequest.setBody(payload);
-            HttpResponse response = http.send(tokenRequest);
-            
-            if (response.getStatusCode() == SpotifyApiHttpClient.SUCCESS_STATUS_CODE) {
 
-                TokenResponse tokenResult = TokenResponse.parse(response.getBody());
-                HttpRequest request = new HttpRequest();
-                request.setEndpoint(endPoint + objectApiNameSpotifyId); 
-                request.setMethod('GET');
-                request.setHeader('Authorization', 'Bearer ' + tokenResult.access_token);	
-                HttpResponse resultRequest = http.send(request);
+            HttpResponse token = SpotifyApiHttpClient.getToken(
+                cred.ClientId__c,
+                cred.ClientSecret__c
+            );
+
+            if (token.getStatusCode() == SpotifyApiHttpClient.SUCCESS_STATUS_CODE) {
+
+                TokenResponse tokenResult = TokenResponse.parse(token.getBody());
+
+                HttpResponse resultRequest = SpotifyApiHttpClient.getImages(
+                    endPoint,
+                    recordSpotifyId,
+                    tokenResult.access_token
+                );
 
                 if (resultRequest.getStatusCode() == SpotifyApiHttpClient.SUCCESS_STATUS_CODE) {
 
                     BaseResponse result = BaseResponse.parse(resultRequest.getBody());
-                    String urlImage = result.images[0].url;
-                    resultUrl = urlImage;
+
+                    for (ImagesResponse urlImage : result.images) {
+                        resultUrl.add(urlImage.url);
+                    }
                 }
             }
 
             return resultUrl;
-                 
+
         } catch (Exception error) {
             throw new AuraHandledException('COULD NOT GET URL: ' + error.getMessage());
-        }   
+        }
     } 
 }

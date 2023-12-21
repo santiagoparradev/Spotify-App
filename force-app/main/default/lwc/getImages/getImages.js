@@ -22,7 +22,7 @@ const ENDPOINT_BY_OBJECT = {
 export default class GetImages extends LightningElement {
   @api recordId;
   @api objectApiName;
-  imageUrl;
+  imageUrls;
   error;
 
   get fields() {
@@ -38,13 +38,14 @@ export default class GetImages extends LightningElement {
   })
   wireGetRecord({ data, errors }) {
     if (data) {
-      const objectApiNameSpotifyId = getFieldValue(data, this.fields);
+      const recordSpotifyId = getFieldValue(data, this.fields);
       const endPoint = `https://api.spotify.com/v1/${
         ENDPOINT_BY_OBJECT[this.objectApiName]
       }/`;
-      findUrl({ objectApiNameSpotifyId, endPoint })
+
+      findUrl({ recordSpotifyId, endPoint })
         .then((result) => {
-          this.imageUrl = result;
+          this.imageUrls = result;
         })
         .catch((error) => {
           this.error = error.body.message;
