@@ -1,12 +1,13 @@
 <template>
   <lightning-card title="Image" icon-name="utility:image">
-    <div class="slds-m-around_medium">
-      <lightning-carousel show-navigation>
+    <div class="card">
+      <lightning-carousel show-navigation class="custom-carousel">
         <template if:true={imageUrls}>
           <template for:each={imageUrls} for:item="imageUrl">
             <lightning-carousel-image
               key={imageUrl}
               src={imageUrl}
+              class="custom-carousel-image"
             ></lightning-carousel-image>
           </template>
         </template>

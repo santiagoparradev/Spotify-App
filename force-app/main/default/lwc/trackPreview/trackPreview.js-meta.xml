@@ -8,9 +8,6 @@
     <targetConfigs>
         <targetConfig targets="lightning__RecordPage">
             <objects>
-                <object>Playlist__c</object>
-                <object>Album__c</object>
-                <object>Artist__c</object>
                 <object>Track__c</object>
             </objects>
         </targetConfig>

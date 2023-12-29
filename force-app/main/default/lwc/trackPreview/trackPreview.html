@@ -1,0 +1,11 @@
+<template>
+  <div class="audio-player-container">
+    <c-get-images record-id={recordId} object-api-name={objectApiName}>
+    </c-get-images>
+    <audio
+      controls="controls"
+      class="custom-audio"
+      src={trackPreviewUrl}
+    ></audio>
+  </div>
+</template>

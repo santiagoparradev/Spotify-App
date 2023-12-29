@@ -1,10 +1,10 @@
-public class ImagesController {
+public class trackPreviewController {
 
     @AuraEnabled(cacheable=true)
-    public static List<String> findUrl(String recordSpotifyId, String endPoint) {
+    public static String findTrackPreviewUrl(String recordSpotifyId) {
 
         try { 
-            List<String> resultUrl = new List<String>();
+            String resultUrl;
             ClientCredential__c cred = [
             SELECT 
                 ClientId__c, 
@@ -25,19 +25,16 @@ public class ImagesController {
 
                 TokenResponse tokenResult = TokenResponse.parse(token.getBody());
 
-                HttpResponse resultRequest = SpotifyApiHttpClient.requestBase(
-                    endPoint,
+                HttpResponse response = SpotifyApiHttpClient.requestBase(
+                    'https://api.spotify.com/v1/tracks/',
                     recordSpotifyId,
                     tokenResult.access_token
                 );
 
-                if (resultRequest.getStatusCode() == SpotifyApiHttpClient.SUCCESS_STATUS_CODE) {
+                if (response.getStatusCode() == SpotifyApiHttpClient.SUCCESS_STATUS_CODE) {
 
-                    BaseResponse result = BaseResponse.parse(resultRequest.getBody());
-
-                    for (ImagesResponse urlImage : result.images) {
-                        resultUrl.add(urlImage.url);
-                    }
+                    SimplefieldTracksObject trackResult = SimplefieldTracksObject.parse(response.getBody());
+                    resultUrl = trackResult.preview_url;
                 }
             }
 
@@ -46,5 +43,5 @@ public class ImagesController {
         } catch (Exception error) {
             throw new AuraHandledException('COULD NOT GET URL: ' + error.getMessage());
         }
-    } 
+    }
 }
