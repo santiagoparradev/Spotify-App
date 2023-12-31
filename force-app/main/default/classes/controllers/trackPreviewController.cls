@@ -6,14 +6,14 @@ public class trackPreviewController {
         try { 
             String resultUrl;
             ClientCredential__c cred = [
-            SELECT 
-                ClientId__c, 
-                ClientSecret__c, 
-                SpotifyUserId__c
-            FROM 
-                ClientCredential__c 
-            WHERE 
-                User__c =:UserInfo.getUserId()
+                SELECT 
+                    ClientId__c, 
+                    ClientSecret__c, 
+                    SpotifyUserId__c
+                FROM 
+                    ClientCredential__c 
+                WHERE 
+                    User__c =:UserInfo.getUserId()
             ];
 
             HttpResponse token = SpotifyApiHttpClient.getToken(
