@@ -10,6 +10,7 @@ public class SimplefieldTracksObject {
     public String id;
     public String name;
     public Integer popularity;
+    public String preview_url;
     
     public static SimplefieldTracksObject parse(String jsonBody) {
         return (SimplefieldTracksObject) JSON.deserialize(jsonBody, SimplefieldTracksObject.class);

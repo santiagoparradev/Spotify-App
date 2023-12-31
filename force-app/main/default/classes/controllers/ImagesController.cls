@@ -25,7 +25,7 @@ public class ImagesController {
 
                 TokenResponse tokenResult = TokenResponse.parse(token.getBody());
 
-                HttpResponse resultRequest = SpotifyApiHttpClient.getImages(
+                HttpResponse resultRequest = SpotifyApiHttpClient.requestBase(
                     endPoint,
                     recordSpotifyId,
                     tokenResult.access_token

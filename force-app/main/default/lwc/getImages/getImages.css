@@ -1,0 +1,33 @@
+.custom-carousel {
+  width: 300px;
+  height: 300px;
+  border: px solid #ffffff;
+  border-radius: 5px;
+  overflow: hidden;
+}
+
+.custom-carousel-image {
+  width: 600px;
+  height: 470px;
+}
+.card {
+  background-color: #f9f9f9; /* Color de fondo */
+  border: 1px solid #ddd; /* Borde con un color más claro */
+  border-radius: 8px; /* Esquinas redondeadas */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Sombra suave */
+  padding: 15px; /* Relleno interno */
+  margin: 10px; /* Margen externo */
+}
+/* Otros estilos específicos si es necesario */
+.card h2 {
+  color: #333; /* Color del texto del encabezado */
+}
+
+.card p {
+  color: #666; /* Color del texto del párrafo */
+}
+
+/* Estilos cuando el ratón pasa sobre la tarjeta (efecto hover) */
+.card:hover {
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Sombra más pronunciada en hover */
+}
