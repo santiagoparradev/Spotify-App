@@ -2,8 +2,8 @@ public class ScheduleDeleteLastRecordsNotUpdated  implements Schedulable {
 
     public void execute(SchedulableContext sc) {
 
-        DeleteLastRecordsNotUpdated Batch = new DeleteLastRecordsNotUpdated();
-        Database.executeBatch(Batch);
+        DeleteLastRecordsNotUpdated batch = new DeleteLastRecordsNotUpdated();
+        Database.executeBatch(batch);
     }
 
     public static void SchedulerMethod() {

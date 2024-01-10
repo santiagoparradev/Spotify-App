@@ -26,17 +26,17 @@ public class DeleteLastRecordsNotUpdatedTest {
         insert artist;
         //Act
         Test.startTest();
-        DeleteLastRecordsNotUpdated Batch = new DeleteLastRecordsNotUpdated(); 
-        Database.executeBatch(Batch);
+        DeleteLastRecordsNotUpdated batch = new DeleteLastRecordsNotUpdated(); 
+        Database.executeBatch(batch);
         Test.stopTest();
         //assert
         
-        List<Track__c> albumsAfterBatchTrack = [SELECT id FROM Track__c WHERE id =: track.id];
-        List<Playlist__c> albumsAfterBatchPlaylist = [SELECT id FROM Playlist__c WHERE id =: playlist.id];
-        List<Artist__c> albumsAfterBatchArtist = [SELECT id FROM Artist__c WHERE id =: artist.id];
+        List<Track__c> TrackAfterBatch = [SELECT Id FROM Track__c WHERE Id =: track.Id];
+        List<Playlist__c> PlaylistAfterBatch = [SELECT Id FROM Playlist__c WHERE Id =: playlist.Id];
+        List<Artist__c> ArtistAfterBatch = [SELECT Id FROM Artist__c WHERE Id =: artist.Id];
         
-        assert.isTrue(albumsAfterBatchTrack.isEmpty(), 'The track list is not empty after the batch is run.');
-        assert.isTrue(albumsAfterBatchPlaylist.isEmpty(), 'The playlist list is not empty after the batch is run.');
-        assert.isTrue(albumsAfterBatchArtist.isEmpty(), 'The  artist list is not empty after the batch is run.');
+        assert.isTrue(TrackAfterBatch.isEmpty(), 'The track list is not empty after the batch is run.');
+        assert.isTrue(PlaylistAfterBatch.isEmpty(), 'The playlist list is not empty after the batch is run.');
+        assert.isTrue(ArtistAfterBatch.isEmpty(), 'The  artist list is not empty after the batch is run.');
     }
 }
