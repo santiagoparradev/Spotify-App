@@ -1,10 +1,13 @@
 @IsTest
 private class ImagesControllerTest {
-
   @IsTest
 	static void itShouldReturnSpotifyImageUrl() {
 		// prepare data
-		Test.setMock(HttpCalloutMock.class, new Mock());
+		List<HttpResponse> responseList = new List<HttpResponse>();
+        addResponse(responseList, '{"access_token":"1111"}');
+        addResponse(responseList, '{"images":[{"url":"this is the url"},{"url":"this is the url2"},{"url":"this is the url3"}]}');
+        Test.setMock(HttpCalloutMock.class, new HttpCalloutMockFactory(responseList));
+
 		ClientCredential__c newCretentials = new ClientCredential__c(
 			User__c = UserInfo.getUserId(),
 			ClientId__c = 'ClientId__c',
@@ -20,27 +23,11 @@ private class ImagesControllerTest {
 		System.assert(!url.isEmpty(), 'url can not be blank');
 	}
 
-	private class Mock implements HttpCalloutMock {
-
-		public HTTPResponse respond(HTTPRequest request) {
- 
-			HttpResponse response = new HttpResponse();
-			response.setStatusCode(SpotifyApiHttpClient.SUCCESS_STATUS_CODE);
-			response.setHeader('Content-Type', 'application/json');
-
-			if (request.getEndpoint().contains(SpotifyApiHttpClient.BASE_TOKEN_ENDPOINT + '/token')) {
-				TokenResponse token = new TokenResponse();
-				token.access_token = '1111';
-				response.setBody(JSON.serialize(token));
-
-			} else {
-				response.setBody('{"images":[' +
-					'{"url":"this is the url"},' +
-					'{"url":"this is the url2"},' +
-					'{"url":"this is the url3"}]}');
-			}
-
-			return response;  
-		}
-	}
+	private static void addResponse(List<HttpResponse> responseList, String body) {
+        
+        HttpResponse baseResponse = new HttpResponse();
+        baseResponse.setStatusCode(SpotifyApiHttpClient.SUCCESS_STATUS_CODE);
+        baseResponse.setBody(body);
+        responseList.add(baseResponse);
+    } 
 }

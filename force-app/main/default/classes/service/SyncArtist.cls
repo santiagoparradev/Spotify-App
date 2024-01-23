@@ -1,47 +1,57 @@
 public class SyncArtist {
 
+    @TestVisible
+    private static Database.SaveResult errorEventResult;
     public static void syncArtist(List<ClientCredential__c> credentials) {
-         
-        Map<String, Artist__c> recordsToUpsertArtistsMap = new Map<String, Artist__c>();
+        
+        try {
+            Map<String, Artist__c> recordsToUpsertArtistsMap = new Map<String, Artist__c>();
 
-        for (ClientCredential__c cred : credentials) {
+            for (ClientCredential__c cred : credentials) {
 
-            HttpResponse token = SpotifyApiHttpClient.getToken(
-                cred.ClientId__c,
-                cred.ClientSecret__c
-            );
+                HttpResponse token = SpotifyApiHttpClient.getToken(
+                    cred.ClientId__c,
+                    cred.ClientSecret__c
+                );
 
-            if (token.getStatusCode() != SpotifyApiHttpClient.SUCCESS_STATUS_CODE)
-            continue;
+                if (token.getStatusCode() != SpotifyApiHttpClient.SUCCESS_STATUS_CODE)
+                continue;
 
-            HttpResponse artistsRes = getArtistsResponse(token, cred);
+                HttpResponse artistsRes = getArtistsResponse(token, cred);
 
-            if (artistsRes.getStatusCode() != SpotifyApiHttpClient.SUCCESS_STATUS_CODE)
-            continue;
+                if (artistsRes.getStatusCode() != SpotifyApiHttpClient.SUCCESS_STATUS_CODE)
+                continue;
 
-            ArtistResponse artistsResult = ArtistResponse.parse(artistsRes.getBody());
+                ArtistResponse artistsResult = ArtistResponse.parse(artistsRes.getBody());
 
-            for (SimplefieldArtistObject artist : artistsResult.artists) {
+                for (SimplefieldArtistObject artist : artistsResult.artists) {
 
-                if (!recordsToUpsertArtistsMap.containsKey(artist.id)) {
+                    if (!recordsToUpsertArtistsMap.containsKey(artist.id)) {
 
-                    Artist__c artistRecord = new Artist__c(
-                        url__c = artist.external_urls?.spotify,
-                        Followers__c = artist.followers?.total,
-                        //Genres__c = String.join(artist.genres, ';'),
-                        SpotifyId__c = artist.id,
-                        Name = artist.name,
-                        Popularity__c = artist.popularity
-                    );
+                        Artist__c artistRecord = new Artist__c(
+                            url__c = artist.external_urls?.spotify,
+                            Followers__c = artist.followers?.total,
+                            //Genres__c = String.join(artist.genres, ';'),
+                            SpotifyId__c = artist.id,
+                            Name = artist.name,
+                            Popularity__c = artist.popularity
+                        );
 
-                    recordsToUpsertArtistsMap.put(artist.id, artistRecord);
+                        recordsToUpsertArtistsMap.put(artist.id, artistRecord);
+                    }
                 }
             }
-        }
-        
-        if (!recordsToUpsertArtistsMap.isEmpty()) {
-            upsert recordsToUpsertArtistsMap.values() SpotifyId__c;
-        }
+            
+            if (!recordsToUpsertArtistsMap.isEmpty()) {
+                upsert recordsToUpsertArtistsMap.values() SpotifyId__c;
+            }
+            
+        } catch (Exception error) {
+            Spotify_Request_Log__e errorEvent = new Spotify_Request_Log__e(
+                ApexError__c = error.getMessage()
+            );  
+            errorEventResult = EventBus.publish(errorEvent);     
+        }       
     }
 
     private static HttpResponse getArtistsResponse(HttpResponse token, ClientCredential__c cred) {

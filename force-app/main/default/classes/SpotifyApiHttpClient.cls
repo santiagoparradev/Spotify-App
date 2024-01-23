@@ -6,7 +6,7 @@ public class SpotifyApiHttpClient extends HttpClient {
     public static String BASE_TOKEN_ENDPOINT = 'https://accounts.spotify.com/api';                                                
                                                           
     public static HttpResponse getToken(String clientId, String clientSecret) {
-    	return new HttpClient()
+    	HttpResponse response = new HttpClient()
             .setEndpoint(BASE_TOKEN_ENDPOINT, '/token')
             .setMethod(HttpClient.Method.POST)
             .setHeader('Content-Type', 'application/x-www-form-urlencoded')
@@ -18,10 +18,16 @@ public class SpotifyApiHttpClient extends HttpClient {
             )
             .send()
             .getResponse();
+
+            if (response.getStatusCode() != SUCCESS_STATUS_CODE) {
+                logError(response.getBody());
+            }
+    
+            return response;
     }
 
     public static HttpResponse getPlaylist(String token, String SpotifyUserId, Integer cont) {
-    	return new HttpClient()
+    	HttpResponse response = new HttpClient()
             .setEndpoint(
                 SPOTIFY_HTTPS, 
                 String.format(
@@ -34,10 +40,16 @@ public class SpotifyApiHttpClient extends HttpClient {
             .setHeader('Host', 'api.spotify.com')
             .send()
             .getResponse();
+
+            if (response.getStatusCode() != SUCCESS_STATUS_CODE) {
+                logError(response.getBody());
+            }
+    
+            return response;
     }
 
     public static HttpResponse getTrack(String token, String id) {
-    	return new HttpClient()
+    	HttpResponse response = new HttpClient()
             .setEndpoint(
                 SPOTIFY_HTTPS, 
                 String.format('/playlists/{0}/tracks', new List<Object>{id})
@@ -47,10 +59,16 @@ public class SpotifyApiHttpClient extends HttpClient {
             .setHeader('Host', 'api.spotify.com')
             .send()
             .getResponse();
+
+            if (response.getStatusCode() != SUCCESS_STATUS_CODE) {
+                logError(response.getBody());
+            }
+    
+            return response;
     }
 
     public static HttpResponse getAlbum(String token, Set<String> albumIds) {
-    	return new HttpClient()
+    	HttpResponse response = new HttpClient()
             .setEndpoint(
                 SPOTIFY_HTTPS, 
                 String.format('/albums?ids={0}', new List<Object>{String.join(albumIds, ',')})
@@ -60,10 +78,16 @@ public class SpotifyApiHttpClient extends HttpClient {
             .setHeader('Host', 'api.spotify.com')
             .send()
             .getResponse();
+
+            if (response.getStatusCode() != SUCCESS_STATUS_CODE) {
+                logError(response.getBody());
+            }
+    
+            return response;
     }
 
     public static HttpResponse getArtist(String token, Set<String> artistIds) {
-    	return new HttpClient()
+    	HttpResponse response = new HttpClient()
             .setEndpoint(
                 SPOTIFY_HTTPS, 
                 String.format('/artists?ids={0}', new List<Object>{String.join(artistIds, ',')})
@@ -73,15 +97,37 @@ public class SpotifyApiHttpClient extends HttpClient {
             .setHeader('Host', 'api.spotify.com')
             .send()
             .getResponse();
+
+        if (response.getStatusCode() != SUCCESS_STATUS_CODE) {
+            logError(response.getBody());
+        }
+
+        return response;
     }
 
     public static HttpResponse requestBase(String endPoint, String recordSpotifyId, String token) {
-    	return new HttpClient()
+    	HttpResponse response = new HttpClient()
             .setEndpoint(endPoint, recordSpotifyId)
             .setMethod(HttpClient.Method.GET)
             .setHeader('Authorization', 'Bearer ' + token)
             .setHeader('Host', 'api.spotify.com')
             .send()
             .getResponse();
+
+        if (response.getStatusCode() != SUCCESS_STATUS_CODE) {
+            logError(response.getBody());
+        }
+
+        return response;
+    }
+    private static void logError(String body) {
+
+        ErrorResponse errorResult = ErrorResponse.parse(body);
+        Spotify_Request_Log__e requestImagesError = new Spotify_Request_Log__e(
+            Message__c = errorResult?.error?.message,
+            Status__c = errorResult?.error?.status
+            //guardar infirmacion del request que fallo
+        );
+        EventBus.publish(requestImagesError);
     }
 }

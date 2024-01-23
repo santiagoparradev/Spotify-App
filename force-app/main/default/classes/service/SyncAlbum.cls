@@ -1,47 +1,56 @@
 public class SyncAlbum {
 
+    @TestVisible
+    private static Database.SaveResult errorEventResult;
     public static void syncAlbum(List<ClientCredential__c> credentials) {
-         
-        Map<String, Album__c> recordsToUpsertAlbumsMap = new Map<String, Album__c>();
 
-        for (ClientCredential__c cred : credentials) {
+        try {
+            Map<String, Album__c> recordsToUpsertAlbumsMap = new Map<String, Album__c>();
 
-            HttpResponse token = SpotifyApiHttpClient.getToken(
-                cred.ClientId__c,
-                cred.ClientSecret__c
-            );
+            for (ClientCredential__c cred : credentials) {
 
-            if (token.getStatusCode() != SpotifyApiHttpClient.SUCCESS_STATUS_CODE)
-            continue;
+                HttpResponse token = SpotifyApiHttpClient.getToken(
+                    cred.ClientId__c,
+                    cred.ClientSecret__c
+                );
 
-            HttpResponse albumsRes = getAlbumsResponse(token, cred);
+                if (token.getStatusCode() != SpotifyApiHttpClient.SUCCESS_STATUS_CODE)
+                continue;
 
-            if (albumsRes.getStatusCode() != SpotifyApiHttpClient.SUCCESS_STATUS_CODE)
-            continue;
+                HttpResponse albumsRes = getAlbumsResponse(token, cred);
 
-            AlbumResponse albumsResult = AlbumResponse.parse(albumsRes.getBody());
+                if (albumsRes.getStatusCode() != SpotifyApiHttpClient.SUCCESS_STATUS_CODE)
+                continue;
 
-            for (SimplefieldAlbumsObject album : albumsResult.albums) {
+                AlbumResponse albumsResult = AlbumResponse.parse(albumsRes.getBody());
 
-                if (!recordsToUpsertAlbumsMap.containsKey(album.id)) {
+                for (SimplefieldAlbumsObject album : albumsResult.albums) {
 
-                    Album__c albumRecord = new Album__c(
-                        Name = album.name,
-                        Genres__c = String.join(album.genres, ';'),
-                        Popularity__c = album.popularity,
-                        ReleaseDate__c = album.release_date,
-                        SpotifyId__c = album.id,
-                        url__c = album.external_urls?.spotify
-                    );
+                    if (!recordsToUpsertAlbumsMap.containsKey(album.id)) {
 
-                    recordsToUpsertAlbumsMap.put(album.id, albumRecord);
-                }  
+                        Album__c albumRecord = new Album__c(
+                            Name = album.name,
+                            Genres__c = String.join(album.genres, ';'),
+                            Popularity__c = album.popularity,
+                            ReleaseDate__c = album.release_date,
+                            SpotifyId__c = album.id,
+                            url__c = album.external_urls?.spotify
+                        );
+
+                        recordsToUpsertAlbumsMap.put(album.id, albumRecord);
+                    }  
+                }
             }
-        }
-        
-        if (!recordsToUpsertAlbumsMap.isEmpty()) {
-            upsert recordsToUpsertAlbumsMap.values() SpotifyId__c;
-        }
+            
+            if (!recordsToUpsertAlbumsMap.isEmpty()) {
+                upsert recordsToUpsertAlbumsMap.values() SpotifyId__c;
+            }
+        } catch (Exception error) {
+            Spotify_Request_Log__e errorEvent = new Spotify_Request_Log__e(
+                ApexError__c = error.getMessage()
+            ); 
+            errorEventResult = EventBus.publish(errorEvent);
+        } 
     }
 
     private static HttpResponse getAlbumsResponse(HttpResponse token, ClientCredential__c cred) {
