@@ -1,51 +1,61 @@
 public class SyncTrack {
 
+    @TestVisible
+    private static Database.SaveResult errorEventResult;
     public static void syncTrack(List<ClientCredential__c> credentials) {
-         
-        Map<String, Track__c> recordsToUpsertTracksMap = new Map<String, Track__c>();
+        
+        try {
+            Map<String, Track__c> recordsToUpsertTracksMap = new Map<String, Track__c>();
 
-        for (ClientCredential__c cred : credentials) {
+            for (ClientCredential__c cred : credentials) {
 
-            HttpResponse token = SpotifyApiHttpClient.getToken(
-                cred.ClientId__c,
-                cred.ClientSecret__c
-            );
+                HttpResponse token = SpotifyApiHttpClient.getToken(
+                    cred.ClientId__c,
+                    cred.ClientSecret__c
+                );
 
-            if (token.getStatusCode() != SpotifyApiHttpClient.SUCCESS_STATUS_CODE)
-            continue;
+                if (token.getStatusCode() != SpotifyApiHttpClient.SUCCESS_STATUS_CODE)
+                continue;
 
-            HttpResponse tracksRes = getTracksResponse(token, cred);
+                HttpResponse tracksRes = getTracksResponse(token, cred);
 
-            if (tracksRes.getStatusCode() != SpotifyApiHttpClient.SUCCESS_STATUS_CODE)
-            continue;
+                if (tracksRes.getStatusCode() != SpotifyApiHttpClient.SUCCESS_STATUS_CODE)
+                continue;
 
-            TrackResponse tracksResult = TrackResponse.parse(tracksRes.getBody());
+                TrackResponse tracksResult = TrackResponse.parse(tracksRes.getBody());
 
-            for (ItemTrack item : tracksResult.items) {
+                for (ItemTrack item : tracksResult.items) {
 
-                SimplefieldTracksObject track = item.track;
+                    SimplefieldTracksObject track = item.track;
 
-                if (!recordsToUpsertTracksMap.containsKey(track.id)) {
+                    if (!recordsToUpsertTracksMap.containsKey(track.id)) {
 
-                    Track__c trackRecord = new Track__c(
-                        //Markets__c = String.join(track.available_markets, ';'),
-                        Album__r = new Album__c(SpotifyId__c = track.album.id),
-                        DiscNumber__c = track.disc_number,
-                        DurationMs__c = track.duration_ms,
-                        Explicit__c = track.explicit,
-                        url__c = track.external_urls?.spotify,
-                        SpotifyId__c = track.id,
-                        Name = track.name,
-                        Popularity__c = track.popularity
-                    );
+                        Track__c trackRecord = new Track__c(
+                            //Markets__c = String.join(track.available_markets, ';'),
+                            Album__r = new Album__c(SpotifyId__c = track.album.id),
+                            DiscNumber__c = track.disc_number,
+                            DurationMs__c = track.duration_ms,
+                            Explicit__c = track.explicit,
+                            url__c = track.external_urls?.spotify,
+                            SpotifyId__c = track.id,
+                            Name = track.name,
+                            Popularity__c = track.popularity
+                        );
 
-                    recordsToUpsertTracksMap.put(track.id, trackRecord);
+                        recordsToUpsertTracksMap.put(track.id, trackRecord);
+                    }
                 }
             }
-        }
-        
-        if (!recordsToUpsertTracksMap.isEmpty()) {
-            upsert recordsToUpsertTracksMap.values() SpotifyId__c;
+            
+            if (!recordsToUpsertTracksMap.isEmpty()) {
+                upsert recordsToUpsertTracksMap.values() SpotifyId__c;
+            }
+            
+        } catch (Exception error) {
+            Spotify_Request_Log__e errorEvent = new Spotify_Request_Log__e(
+                ApexError__c = error.getMessage()
+            );  
+            errorEventResult = EventBus.publish(errorEvent);
         }
     }
 

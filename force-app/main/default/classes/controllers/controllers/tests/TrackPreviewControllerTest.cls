@@ -1,11 +1,11 @@
 @IsTest
-private class ImagesControllerTest {
+private class TrackPreviewControllerTest {
   @IsTest
-	static void itShouldReturnSpotifyImageUrl() {
+	static void itShouldReturnSpotifyTrackPreviewUrl() {
 		// prepare data
 		List<HttpResponse> responseList = new List<HttpResponse>();
         addResponse(responseList, '{"access_token":"1111"}');
-        addResponse(responseList, '{"images":[{"url":"this is the url"},{"url":"this is the url2"},{"url":"this is the url3"}]}');
+        addResponse(responseList, '{"preview_url":"this is the url"}');
         Test.setMock(HttpCalloutMock.class, new HttpCalloutMockFactory(responseList));
 
 		ClientCredential__c newCretentials = new ClientCredential__c(
@@ -17,10 +17,10 @@ private class ImagesControllerTest {
 		insert newCretentials;
 		// test
 		Test.startTest();
-		List<String> url = ImagesController.findUrl('123456', 'https://api.spotify.com/v1/albums/'); 
+		String url = trackPreviewController.findTrackPreviewUrl('123456'); 
 		Test.stopTest();
 		// assert
-		System.assert(!url.isEmpty(), 'url can not be blank');
+        String.isNotBlank(url);
 	}
 
 	private static void addResponse(List<HttpResponse> responseList, String body) {

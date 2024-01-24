@@ -1,5 +1,7 @@
-public class trackPreviewController {
+public class TrackPreviewController {
 
+    @TestVisible
+    private static Database.SaveResult errorEventResult;
     @AuraEnabled(cacheable=true)
     public static String findTrackPreviewUrl(String recordSpotifyId) {
 
@@ -41,6 +43,11 @@ public class trackPreviewController {
             return resultUrl;
 
         } catch (Exception error) {
+            Spotify_Request_Log__e errorEvent = new Spotify_Request_Log__e(
+                ApexError__c = error.getMessage()
+		    );  
+            errorEventResult = EventBus.publish(errorEvent);
+            
             throw new AuraHandledException('COULD NOT GET URL: ' + error.getMessage());
         }
     }
