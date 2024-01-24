@@ -29,21 +29,14 @@ public class SpotifyApiHttpClient extends HttpClient {
     }
 
     public static HttpResponse getPlaylist(String token, String SpotifyUserId, Integer cont) {
-        
-        String endpoint = 
-            SPOTIFY_HTTPS + 
-            String.format(
-                '/users/{0}/playlists?limit={1}&offset={2}', 
-                new List<Object>{SpotifyUserId, LIMIT_PLAYLIST, cont}    
-            );
+
+        String endpointFormat = String.format(
+            '/users/{0}/playlists?limit={1}&offset={2}', 
+            new List<Object>{SpotifyUserId, LIMIT_PLAYLIST, cont}    
+        );
+        String endpoint = SPOTIFY_HTTPS + endpointFormat;      
     	HttpResponse response = new HttpClient()
-            .setEndpoint(
-                SPOTIFY_HTTPS, 
-                String.format(
-                    '/users/{0}/playlists?limit={1}&offset={2}',
-                    new List<Object>{SpotifyUserId, LIMIT_PLAYLIST, cont}
-                )
-            )
+            .setEndpoint(SPOTIFY_HTTPS, endpointFormat)
             .setMethod(HttpClient.Method.GET)
             .setHeader('Authorization', 'Bearer ' + token)
             .setHeader('Host', 'api.spotify.com')
@@ -59,14 +52,10 @@ public class SpotifyApiHttpClient extends HttpClient {
 
     public static HttpResponse getTrack(String token, String id) {
 
-        String endpoint = 
-            SPOTIFY_HTTPS + 
-            String.format('/playlists/{0}/tracks', new List<Object>{id});
+        String endpointFormat = String.format('/playlists/{0}/tracks', new List<Object>{id});
+        String endpoint = SPOTIFY_HTTPS + endpointFormat; 
     	HttpResponse response = new HttpClient()
-            .setEndpoint(
-                SPOTIFY_HTTPS, 
-                String.format('/playlists/{0}/tracks', new List<Object>{id})
-            )
+            .setEndpoint(SPOTIFY_HTTPS, endpointFormat)
             .setMethod(HttpClient.Method.GET)
             .setHeader('Authorization', 'Bearer ' + token)
             .setHeader('Host', 'api.spotify.com')
@@ -81,15 +70,11 @@ public class SpotifyApiHttpClient extends HttpClient {
     }
 
     public static HttpResponse getAlbum(String token, Set<String> albumIds) {
-
-        String endpoint = 
-            SPOTIFY_HTTPS +
-            String.format('/albums?ids={0}', new List<Object>{String.join(albumIds, ',')});
+        String endpointFormat = String.format('/albums?ids={0}', new List<Object>{String.join(albumIds, ',')});
+        String endpoint = SPOTIFY_HTTPS + endpointFormat;
+            
     	HttpResponse response = new HttpClient()
-            .setEndpoint(
-                SPOTIFY_HTTPS, 
-                String.format('/albums?ids={0}', new List<Object>{String.join(albumIds, ',')})
-            )
+            .setEndpoint(SPOTIFY_HTTPS, endpointFormat)
             .setMethod(HttpClient.Method.GET)
             .setHeader('Authorization', 'Bearer ' + token)
             .setHeader('Host', 'api.spotify.com')
@@ -105,14 +90,10 @@ public class SpotifyApiHttpClient extends HttpClient {
 
     public static HttpResponse getArtist(String token, Set<String> artistIds) {
 
-        String endpoint = 
-            SPOTIFY_HTTPS +
-            String.format('/artists?ids={0}', new List<Object>{String.join(artistIds, ',')});
+        String endpointFormat = String.format('/artists?ids={0}', new List<Object>{String.join(artistIds, ',')});
+        String endpoint = SPOTIFY_HTTPS + endpointFormat;
     	HttpResponse response = new HttpClient()
-            .setEndpoint(
-                SPOTIFY_HTTPS, 
-                String.format('/artists?ids={0}', new List<Object>{String.join(artistIds, ',')})
-            )
+            .setEndpoint(SPOTIFY_HTTPS, endpointFormat)
             .setMethod(HttpClient.Method.GET)
             .setHeader('Authorization', 'Bearer ' + token)
             .setHeader('Host', 'api.spotify.com')
@@ -127,7 +108,7 @@ public class SpotifyApiHttpClient extends HttpClient {
     }
 
     public static HttpResponse requestBase(String endPoint, String recordSpotifyId, String token) {
-
+        
         String getEndpoint = endPoint + recordSpotifyId;
     	HttpResponse response = new HttpClient()
             .setEndpoint(endPoint, recordSpotifyId)
@@ -143,6 +124,7 @@ public class SpotifyApiHttpClient extends HttpClient {
 
         return response;
     }
+    
     private static void logError(String body, String endpoint) {
 
         ErrorResponse errorResult = ErrorResponse.parse(body);

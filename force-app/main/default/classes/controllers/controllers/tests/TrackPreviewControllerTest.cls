@@ -1,6 +1,5 @@
 @IsTest
 private class TrackPreviewControllerTest {
-
   @IsTest
 	static void itShouldReturnSpotifyTrackPreviewUrl() {
 		// prepare data
