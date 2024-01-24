@@ -1,5 +1,5 @@
 @IsTest
-private class trackPreviewControllerTest {
+private class TrackPreviewControllerTest {
 
   @IsTest
 	static void itShouldReturnSpotifyTrackPreviewUrl() {

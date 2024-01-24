@@ -1,4 +1,4 @@
-public class trackPreviewController {
+public class TrackPreviewController {
 
     @TestVisible
     private static Database.SaveResult errorEventResult;
@@ -47,7 +47,7 @@ public class trackPreviewController {
                 ApexError__c = error.getMessage()
 		    );  
             errorEventResult = EventBus.publish(errorEvent);
-            System.debug(errorEventResult);
+            
             throw new AuraHandledException('COULD NOT GET URL: ' + error.getMessage());
         }
     }

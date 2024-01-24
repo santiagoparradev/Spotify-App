@@ -51,8 +51,9 @@ public class SyncPlaylist {
 
                 } while (cont < playlists.total);
             }
-        
-            upsert forInsert SpotifyId__c;
+            if (!forInsert.isEmpty()) {
+                upsert forInsert SpotifyId__c;
+            }
             
         } catch (Exception error) {
             Spotify_Request_Log__e errorEvent = new Spotify_Request_Log__e(
