@@ -1,16 +1,10 @@
-.audio-player-container {
-  text-align: center;
-  padding: 20px;
-}
-
 .custom-audio {
   width: 100%;
   max-width: 600px;
-  margin: 0 auto;
+  margin: 0px auto;
   display: block;
-  background-color: #fffefe;
-  border: 1px solid #ffffff;
+  background-color: #1ed760;
+  border: 0px;
   border-radius: 5px;
   padding: 10px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
