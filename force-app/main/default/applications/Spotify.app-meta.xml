@@ -1,8 +1,9 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="UTF-8" ?>
 <CustomApplication xmlns="http://soap.sforce.com/2006/04/metadata">
     <actionOverrides>
         <actionName>View</actionName>
-        <comment>Action override created by Lightning App Builder during activation.</comment>
+        <comment
+    >Action override created by Lightning App Builder during activation.</comment>
         <content>Album_Record_Page</content>
         <formFactor>Large</formFactor>
         <skipRecordTypeSelect>false</skipRecordTypeSelect>
@@ -11,7 +12,8 @@
     </actionOverrides>
     <actionOverrides>
         <actionName>View</actionName>
-        <comment>Action override created by Lightning App Builder during activation.</comment>
+        <comment
+    >Action override created by Lightning App Builder during activation.</comment>
         <content>Album_Record_Page</content>
         <formFactor>Small</formFactor>
         <skipRecordTypeSelect>false</skipRecordTypeSelect>
@@ -20,7 +22,28 @@
     </actionOverrides>
     <actionOverrides>
         <actionName>View</actionName>
-        <comment>Action override created by Lightning App Builder during activation.</comment>
+        <comment
+    >Action override created by Lightning App Builder during activation.</comment>
+        <content>Artist_Record_Page1</content>
+        <formFactor>Large</formFactor>
+        <skipRecordTypeSelect>false</skipRecordTypeSelect>
+        <type>Flexipage</type>
+        <pageOrSobjectType>Artist__c</pageOrSobjectType>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>View</actionName>
+        <comment
+    >Action override created by Lightning App Builder during activation.</comment>
+        <content>Artist_Record_Page1</content>
+        <formFactor>Small</formFactor>
+        <skipRecordTypeSelect>false</skipRecordTypeSelect>
+        <type>Flexipage</type>
+        <pageOrSobjectType>Artist__c</pageOrSobjectType>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>View</actionName>
+        <comment
+    >Action override created by Lightning App Builder during activation.</comment>
         <content>Playlist_Record_Page</content>
         <formFactor>Small</formFactor>
         <skipRecordTypeSelect>false</skipRecordTypeSelect>
@@ -29,7 +52,8 @@
     </actionOverrides>
     <actionOverrides>
         <actionName>View</actionName>
-        <comment>Action override created by Lightning App Builder during activation.</comment>
+        <comment
+    >Action override created by Lightning App Builder during activation.</comment>
         <content>Playlist_Record_Page</content>
         <formFactor>Large</formFactor>
         <skipRecordTypeSelect>false</skipRecordTypeSelect>
@@ -38,7 +62,8 @@
     </actionOverrides>
     <actionOverrides>
         <actionName>View</actionName>
-        <comment>Action override created by Lightning App Builder during activation.</comment>
+        <comment
+    >Action override created by Lightning App Builder during activation.</comment>
         <content>Track_Record_Page</content>
         <formFactor>Large</formFactor>
         <skipRecordTypeSelect>false</skipRecordTypeSelect>
@@ -47,30 +72,13 @@
     </actionOverrides>
     <actionOverrides>
         <actionName>View</actionName>
-        <comment>Action override created by Lightning App Builder during activation.</comment>
+        <comment
+    >Action override created by Lightning App Builder during activation.</comment>
         <content>Track_Record_Page</content>
         <formFactor>Small</formFactor>
         <skipRecordTypeSelect>false</skipRecordTypeSelect>
         <type>Flexipage</type>
         <pageOrSobjectType>Track__c</pageOrSobjectType>
-    </actionOverrides>
-    <actionOverrides>
-        <actionName>View</actionName>
-        <comment>Action override created by Lightning App Builder during activation.</comment>
-        <content>Artist_Record_Page</content>
-        <formFactor>Large</formFactor>
-        <skipRecordTypeSelect>false</skipRecordTypeSelect>
-        <type>Flexipage</type>
-        <pageOrSobjectType>Artist__c</pageOrSobjectType>
-    </actionOverrides>
-    <actionOverrides>
-        <actionName>View</actionName>
-        <comment>Action override created by Lightning App Builder during activation.</comment>
-        <content>Artist_Record_Page</content>
-        <formFactor>Small</formFactor>
-        <skipRecordTypeSelect>false</skipRecordTypeSelect>
-        <type>Flexipage</type>
-        <pageOrSobjectType>Artist__c</pageOrSobjectType>
     </actionOverrides>
     <brand>
         <headerColor>#20D860</headerColor>
@@ -90,6 +98,7 @@
     <tabs>Playlist__c</tabs>
     <tabs>Album__c</tabs>
     <tabs>ClientCredential__c</tabs>
+    <tabs>log__c</tabs>
     <uiType>Lightning</uiType>
     <utilityBar>Spotify_UtilityBar</utilityBar>
 </CustomApplication>
