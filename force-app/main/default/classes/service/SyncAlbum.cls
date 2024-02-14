@@ -17,31 +17,34 @@ public class SyncAlbum {
                 if (token.getStatusCode() != SpotifyApiHttpClient.SUCCESS_STATUS_CODE)
                 continue;
 
-                HttpResponse albumsRes = getAlbumsResponse(token, cred);
+                List<HttpResponse> albumsRes = getAlbumsResponse(token, cred);
 
-                if (albumsRes.getStatusCode() != SpotifyApiHttpClient.SUCCESS_STATUS_CODE)
-                continue;
+                for (HttpResponse albums : albumsRes) {
 
-                AlbumResponse albumsResult = AlbumResponse.parse(albumsRes.getBody());
+                    if (albums.getStatusCode() != SpotifyApiHttpClient.SUCCESS_STATUS_CODE)
+                    continue;
 
-                for (SimplefieldAlbumsObject album : albumsResult.albums) {
+                    AlbumResponse albumsResult = AlbumResponse.parse(albums.getBody());
 
-                    if (!recordsToUpsertAlbumsMap.containsKey(album.id)) {
+                    for (SimplefieldAlbumsObject album : albumsResult.albums) {
 
-                        Album__c albumRecord = new Album__c(
-                            Name = album.name,
-                            Genres__c = String.join(album.genres, ';'),
-                            Popularity__c = album.popularity,
-                            ReleaseDate__c = album.release_date,
-                            SpotifyId__c = album.id,
-                            url__c = album.external_urls?.spotify
-                        );
+                        if (!recordsToUpsertAlbumsMap.containsKey(album.id)) {
 
-                        recordsToUpsertAlbumsMap.put(album.id, albumRecord);
-                    }  
+                            Album__c albumRecord = new Album__c(
+                                Name = album.name,
+                                Genres__c = String.join(album.genres, ';'),
+                                Popularity__c = album.popularity,
+                                ReleaseDate__c = album.release_date,
+                                SpotifyId__c = album.id,
+                                url__c = album.external_urls?.spotify
+                            );
+
+                            recordsToUpsertAlbumsMap.put(album.id, albumRecord);
+                        }  
+                    }
                 }
             }
-            
+
             if (!recordsToUpsertAlbumsMap.isEmpty()) {
                 upsert recordsToUpsertAlbumsMap.values() SpotifyId__c;
             }
@@ -53,13 +56,13 @@ public class SyncAlbum {
         } 
     }
 
-    private static HttpResponse getAlbumsResponse(HttpResponse token, ClientCredential__c cred) {
+    private static List<HttpResponse> getAlbumsResponse(HttpResponse token, ClientCredential__c cred) {
 
         PlaylistResponse playlists;
         Integer cont = 0;
         TokenResponse tokenRes = TokenResponse.parse(token.getBody());
-        Set<String>  albumIds = new Set<String>();
-        
+        List<HttpResponse> albumListResponse = new List<HttpResponse>();
+
         do {
 
             HttpResponse playlistsRes = SpotifyApiHttpClient.getPlaylist(
@@ -82,17 +85,28 @@ public class SyncAlbum {
 
                 if (trackRes.getStatusCode() != SpotifyApiHttpClient.SUCCESS_STATUS_CODE) 
                 continue;
-                
+
+                List<String>  albumIds = new List<String>();
+                Integer maximunSize = 20;
                 TrackResponse tracks = TrackResponse.parse(trackRes.getBody());
 
                 for (ItemTrack item : tracks.items) {
                     albumIds.add(item.track.album.id);
+                }
+
+                for (Integer i = 0; i < albumIds.size(); i += maximunSize) {
+                    List<String> listAlbum = new List<String>();
+
+                    for (Integer j = i; j < Math.min(i + maximunSize, albumIds.size()); j++) {
+                        listAlbum.add(albumIds[j]);
+                    }
+                    albumListResponse.add(SpotifyApiHttpClient.getAlbum(tokenRes.access_token, listAlbum));
                 }
             }
             cont += playlists.items.size();
 
         } while (cont < playlists.total);
 
-        return SpotifyApiHttpClient.getAlbum(tokenRes.access_token, albumIds);
+        return albumListResponse;
     }
 }

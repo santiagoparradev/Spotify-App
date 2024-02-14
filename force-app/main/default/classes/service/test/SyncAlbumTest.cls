@@ -7,6 +7,7 @@ private class SyncAlbumTest {
         addResponse(responseList, '{"access_token":"1111"}');
         addResponse(responseList, '{"total":2,"items":[{"id":"0"}]}');
         addResponse(responseList, '{"items":[{"track":{"id":"trackId","album":{"id":"albumId"}}}]}');
+        addResponse(responseList, '{"albums":[{"name":"album name","id":"albumId","genres":[]}]}');
         addResponse(responseList, '{"total":2,"items":[{"id":"1"}]}');
         addResponse(responseList, '{"items":[{"track":{"id":"trackId","album":{"id":"albumId"}}}]}');
         addResponse(responseList, '{"albums":[{"name":"album name","id":"albumId","genres":[]}]}');
