@@ -69,7 +69,7 @@ public class SpotifyApiHttpClient extends HttpClient {
             return response;
     }
 
-    public static HttpResponse getAlbum(String token, Set<String> albumIds) {
+    public static HttpResponse getAlbum(String token, List<String> albumIds) {
         String endpointFormat = String.format('/albums?ids={0}', new List<Object>{String.join(albumIds, ',')});
         String endpoint = SPOTIFY_HTTPS + endpointFormat;
             
