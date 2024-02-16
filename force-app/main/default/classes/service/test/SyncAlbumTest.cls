@@ -7,10 +7,12 @@ private class SyncAlbumTest {
         addResponse(responseList, '{"access_token":"1111"}');
         addResponse(responseList, '{"total":2,"items":[{"id":"0"}]}');
         addResponse(responseList, '{"items":[{"track":{"id":"trackId","album":{"id":"albumId"}}}]}');
-        addResponse(responseList, '{"albums":[{"name":"album name","id":"albumId","genres":[]}]}');
         addResponse(responseList, '{"total":2,"items":[{"id":"1"}]}');
-        addResponse(responseList, '{"items":[{"track":{"id":"trackId","album":{"id":"albumId"}}}]}');
-        addResponse(responseList, '{"albums":[{"name":"album name","id":"albumId","genres":[]}]}');
+        addResponse(responseList, '{"items":[{"track":{"id":"trackId2","album":{"id":"albumId2"}}}]}');
+        addResponse(responseList, '{"albums":[' +
+            '{"name":"album name","id":"albumId","genres":[]},' +
+            '{"name":"album name","id":"albumId2","genres":[]}]}'
+        );
         Test.setMock(HttpCalloutMock.class, new HttpCalloutMockFactory(responseList));
 
         List<ClientCredential__c> newCredentials = new List<ClientCredential__c>{
@@ -29,15 +31,15 @@ private class SyncAlbumTest {
             DataBase.executeBatch(creds);
         Test.stopTest();
         //assert
-        List<Album__c> albumss = [SELECT Name FROM Album__c WHERE Name = 'album name'];
-        Assert.areEqual(1, albumss.size(), 'is should add one album');
+        List<Album__c> albums = [SELECT Name FROM Album__c WHERE Name = 'album name'];
+        Assert.areEqual(2, albums.size(), 'is should add one album');
     }
 
     private static void addResponse(List<HttpResponse> responseList, String body) {
-        
+
         HttpResponse baseResponse = new HttpResponse();
         baseResponse.setStatusCode(SpotifyApiHttpClient.SUCCESS_STATUS_CODE);
         baseResponse.setBody(body);
         responseList.add(baseResponse);
-    } 
+    }
 }

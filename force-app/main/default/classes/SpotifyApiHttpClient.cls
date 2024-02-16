@@ -1,5 +1,6 @@
 public class SpotifyApiHttpClient extends HttpClient {
     
+    public static integer MAXIMUN_SIZE = 20;
     public static Integer SUCCESS_STATUS_CODE = 200;
     public static Integer LIMIT_PLAYLIST = 50;
     public static String SPOTIFY_HTTPS = 'https://api.spotify.com/v1';
@@ -69,7 +70,7 @@ public class SpotifyApiHttpClient extends HttpClient {
             return response;
     }
 
-    public static HttpResponse getAlbum(String token, List<String> albumIds) {
+    public static HttpResponse getAlbum(String token, Set<String> albumIds) {
         String endpointFormat = String.format('/albums?ids={0}', new List<Object>{String.join(albumIds, ',')});
         String endpoint = SPOTIFY_HTTPS + endpointFormat;
             
