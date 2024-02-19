@@ -17,9 +17,11 @@ public class SyncAlbum {
                 if (token.getStatusCode() != SpotifyApiHttpClient.SUCCESS_STATUS_CODE)
                 continue;
 
-                List<SimplefieldAlbumsObject> albumsRes = getSimplefieldAlbumsObjectList(token, cred);
+                List<SimplefieldAlbumsObject> albums = getAlbumsList(
+                    TokenResponse.parse(token.getBody()).access_token,
+                    cred.SpotifyUserId__c);
 
-                for (SimplefieldAlbumsObject album : albumsRes) {
+                for (SimplefieldAlbumsObject album : albums) {
 
                     if (!recordsToUpsertAlbumsMap.containsKey(album.id)) {
 
@@ -40,6 +42,7 @@ public class SyncAlbum {
             if (!recordsToUpsertAlbumsMap.isEmpty()) {
                 upsert recordsToUpsertAlbumsMap.values() SpotifyId__c;
             }
+
         } catch (Exception error) {
             Spotify_Request_Log__e errorEvent = new Spotify_Request_Log__e(
                 ApexError__c = error.getMessage()
@@ -48,18 +51,42 @@ public class SyncAlbum {
         } 
     }
 
-    private static List<SimplefieldAlbumsObject> getSimplefieldAlbumsObjectList(HttpResponse token, ClientCredential__c cred) {
+    private static List<SimplefieldAlbumsObject> getAlbumsList(String token, String spotifyUserId) {
 
-        List<String> albumIds = new List<String>();
+        List<String> albumIds = getAlbumIds(token, spotifyUserId);
+        Set<String> albumsToProcess = new Set<String>();
+        List<SimplefieldAlbumsObject> result = new List<SimplefieldAlbumsObject>();
+
+        for (Integer i = 0; i < albumIds.size(); i ++) {
+
+            albumsToProcess.add(albumIds[i]);
+
+            if (albumsToProcess.size() == SpotifyApiHttpClient.MAXIMUM_ALBUM_REQUEST_SIZE || albumIds.size() == i + 1) {
+
+                HttpResponse response = SpotifyApiHttpClient.getAlbum(token, albumsToProcess);
+
+                if (response.getStatusCode() != SpotifyApiHttpClient.SUCCESS_STATUS_CODE)
+                continue;
+
+                result.addAll(AlbumResponse.parse(response.getBody()).albums);
+                albumsToProcess.clear();
+            }
+        }
+
+        return result;
+    }
+
+    private static List<String> getAlbumIds(String token, String spotifyUserId) {
+
+        List<String> result = new List<String>();
         PlaylistResponse playlists;
         Integer cont = 0;
-        TokenResponse tokenRes = TokenResponse.parse(token.getBody());
 
         do {
 
             HttpResponse playlistsRes = SpotifyApiHttpClient.getPlaylist(
-                tokenRes.access_token,
-                cred.SpotifyUserId__c,
+                token,
+                spotifyUserId,
                 cont 
             );
 
@@ -71,7 +98,7 @@ public class SyncAlbum {
             for (SimplefiedPlaylistObject playlist : playlists.items) {
 
                 HttpResponse trackRes = SpotifyApiHttpClient.getTrack(
-                    tokenRes.access_token,
+                    token,
                     playlist.id
                 );
 
@@ -79,41 +106,12 @@ public class SyncAlbum {
                 continue;
 
                 TrackResponse tracks = TrackResponse.parse(trackRes.getBody());
-                albumIds.addAll(tracks.getAlbumIds());
+                result.addAll(tracks.getAlbumIds());
             }
             cont += playlists.items.size();
 
         } while (cont < playlists.total);
 
-        return getAlbumsList(albumIds, tokenRes.access_token);
-    }
-
-    private static List<SimplefieldAlbumsObject> getAlbumsList(List<String> albumIds, String token) {
-
-        Set<String> albumsToProcess = new Set<String>();
-        List<HttpResponse> albumListResponse = new List<HttpResponse>();
-        List<SimplefieldAlbumsObject> albumsResult = new List<SimplefieldAlbumsObject>();
-
-        for (Integer i = 0; i < albumIds.size(); i ++) {
-
-            albumsToProcess.add(albumIds[i]);
-
-            if (albumsToProcess.size() == SpotifyApiHttpClient.MAXIMUN_SIZE || albumIds.size() == i + 1) {
-
-                albumListResponse.add(SpotifyApiHttpClient.getAlbum(token, albumsToProcess));
-                albumsToProcess.clear();
-            }
-        }
-
-        for (HttpResponse albums : albumListResponse) {
-
-            if (albums.getStatusCode() != SpotifyApiHttpClient.SUCCESS_STATUS_CODE)
-            continue;
-
-            AlbumResponse Result = AlbumResponse.parse(albums.getBody());
-            albumsResult.addAll(Result.albums);
-        }
-
-        return albumsResult;
+        return result;
     }
 }

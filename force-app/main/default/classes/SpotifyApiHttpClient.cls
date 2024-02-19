@@ -1,15 +1,15 @@
 public class SpotifyApiHttpClient extends HttpClient {
-    
-    public static integer MAXIMUN_SIZE = 20;
+
+    public static integer MAXIMUM_ALBUM_REQUEST_SIZE = 20;
     public static Integer SUCCESS_STATUS_CODE = 200;
     public static Integer LIMIT_PLAYLIST = 50;
     public static String SPOTIFY_HTTPS = 'https://api.spotify.com/v1';
-    public static String BASE_TOKEN_ENDPOINT = 'https://accounts.spotify.com/api';                                                
-                                                          
+    public static String BASE_TOKEN_ENDPOINT = 'https://accounts.spotify.com/api';
+
     public static HttpResponse getToken(String clientId, String clientSecret) {
         
         String endpoint = (BASE_TOKEN_ENDPOINT + '/token');
-    	HttpResponse response = new HttpClient()
+        HttpResponse response = new HttpClient()
             .setEndpoint(BASE_TOKEN_ENDPOINT, '/token')
             .setMethod(HttpClient.Method.POST)
             .setHeader('Content-Type', 'application/x-www-form-urlencoded')
@@ -32,11 +32,11 @@ public class SpotifyApiHttpClient extends HttpClient {
     public static HttpResponse getPlaylist(String token, String SpotifyUserId, Integer cont) {
 
         String endpointFormat = String.format(
-            '/users/{0}/playlists?limit={1}&offset={2}', 
-            new List<Object>{SpotifyUserId, LIMIT_PLAYLIST, cont}    
+            '/users/{0}/playlists?limit={1}&offset={2}',
+            new List<Object>{SpotifyUserId, LIMIT_PLAYLIST, cont}
         );
-        String endpoint = SPOTIFY_HTTPS + endpointFormat;      
-    	HttpResponse response = new HttpClient()
+        String endpoint = SPOTIFY_HTTPS + endpointFormat;
+        HttpResponse response = new HttpClient()
             .setEndpoint(SPOTIFY_HTTPS, endpointFormat)
             .setMethod(HttpClient.Method.GET)
             .setHeader('Authorization', 'Bearer ' + token)
@@ -47,7 +47,7 @@ public class SpotifyApiHttpClient extends HttpClient {
             if (response.getStatusCode() != SUCCESS_STATUS_CODE) {
                 logError(response.getBody(), endpoint);
             }
-    
+
             return response;
     }
 
@@ -66,15 +66,14 @@ public class SpotifyApiHttpClient extends HttpClient {
             if (response.getStatusCode() != SUCCESS_STATUS_CODE) {
                 logError(response.getBody(), endpoint);
             }
-    
+
             return response;
     }
 
     public static HttpResponse getAlbum(String token, Set<String> albumIds) {
         String endpointFormat = String.format('/albums?ids={0}', new List<Object>{String.join(albumIds, ',')});
         String endpoint = SPOTIFY_HTTPS + endpointFormat;
-            
-    	HttpResponse response = new HttpClient()
+        HttpResponse response = new HttpClient()
             .setEndpoint(SPOTIFY_HTTPS, endpointFormat)
             .setMethod(HttpClient.Method.GET)
             .setHeader('Authorization', 'Bearer ' + token)
@@ -85,7 +84,7 @@ public class SpotifyApiHttpClient extends HttpClient {
             if (response.getStatusCode() != SUCCESS_STATUS_CODE) {
                 logError(response.getBody(), endpoint);
             }
-    
+
             return response;
     }
 
@@ -93,7 +92,7 @@ public class SpotifyApiHttpClient extends HttpClient {
 
         String endpointFormat = String.format('/artists?ids={0}', new List<Object>{String.join(artistIds, ',')});
         String endpoint = SPOTIFY_HTTPS + endpointFormat;
-    	HttpResponse response = new HttpClient()
+        HttpResponse response = new HttpClient()
             .setEndpoint(SPOTIFY_HTTPS, endpointFormat)
             .setMethod(HttpClient.Method.GET)
             .setHeader('Authorization', 'Bearer ' + token)
@@ -109,9 +108,9 @@ public class SpotifyApiHttpClient extends HttpClient {
     }
 
     public static HttpResponse requestBase(String endPoint, String recordSpotifyId, String token) {
-        
+
         String getEndpoint = endPoint + recordSpotifyId;
-    	HttpResponse response = new HttpClient()
+        HttpResponse response = new HttpClient()
             .setEndpoint(endPoint, recordSpotifyId)
             .setMethod(HttpClient.Method.GET)
             .setHeader('Authorization', 'Bearer ' + token)
@@ -125,7 +124,7 @@ public class SpotifyApiHttpClient extends HttpClient {
 
         return response;
     }
-    
+
     private static void logError(String body, String endpoint) {
 
         ErrorResponse errorResult = ErrorResponse.parse(body);
