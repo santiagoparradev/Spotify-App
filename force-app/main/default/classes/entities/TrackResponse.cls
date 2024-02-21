@@ -29,4 +29,23 @@ public class TrackResponse {
 
         return result;
     }
+
+    public Set<String> getArtistIds() {
+
+        Set<String> result = new Set<String>();
+
+        for (ItemTrack item : this.items) {
+
+            SimplefieldTracksObject track = item.track;
+
+            for (SimplefieldArtistObject artist : track.artists) {
+
+                if (!result.contains(artist.id)) {
+                    result.add(artist.id);
+                }
+            }
+        }
+
+        return result;
+    }
 }
