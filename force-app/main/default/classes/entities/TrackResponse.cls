@@ -2,7 +2,7 @@ public class TrackResponse {
 
     public List<ItemTrack> items;
     public Integer total;
-    
+
     public static TrackResponse parse(String jsonBody) {
         return (TrackResponse) JSON.deserialize(jsonBody, TrackResponse.class);
     }
@@ -15,6 +15,16 @@ public class TrackResponse {
             if (!result.contains(item.track.album.id)) {
                 result.add(item.track.album.id);
             }
+        }
+        return result;
+    }
+
+    public List<SimplefieldTracksObject> getTracks() { 
+
+        List<SimplefieldTracksObject> result = new List<SimplefieldTracksObject>();
+
+        for (ItemTrack item : this.items) {
+            result.add(item.track);
         }
 
         return result;

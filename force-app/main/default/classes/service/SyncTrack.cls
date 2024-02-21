@@ -3,7 +3,7 @@ public class SyncTrack {
     @TestVisible
     private static Database.SaveResult errorEventResult;
     public static void syncTrack(List<ClientCredential__c> credentials) {
-        
+
         try {
             Map<String, Track__c> recordsToUpsertTracksMap = new Map<String, Track__c>();
 
@@ -13,14 +13,14 @@ public class SyncTrack {
                     cred.ClientId__c,
                     cred.ClientSecret__c
                 );
-                
+
                 if (token.getStatusCode() != SpotifyApiHttpClient.SUCCESS_STATUS_CODE)
                 continue;
 
                 List<SimplefieldTracksObject> tracks = getTracksList(
-                    TokenResponse.parse(token.getBody()).access_token, 
+                    TokenResponse.parse(token.getBody()).access_token,
                     cred.SpotifyUserId__c);
-                    
+
                 for (SimplefieldTracksObject track : tracks) {
 
                     if (!recordsToUpsertTracksMap.containsKey(track.id)) {
@@ -36,6 +36,7 @@ public class SyncTrack {
                             Name = track.name,
                             Popularity__c = track.popularity
                         );
+
                         recordsToUpsertTracksMap.put(track.id, trackRecord);
                     }
                 }
@@ -64,10 +65,10 @@ public class SyncTrack {
             HttpResponse playlistsRes = SpotifyApiHttpClient.getPlaylist(
                 token,
                 spotifyUserId,
-                cont 
+                cont
             );
 
-            if (playlistsRes.getStatusCode() != SpotifyApiHttpClient.SUCCESS_STATUS_CODE) 
+            if (playlistsRes.getStatusCode() != SpotifyApiHttpClient.SUCCESS_STATUS_CODE)
             continue;
 
             playlists = PlaylistResponse.parse(playlistsRes.getBody());
@@ -76,15 +77,13 @@ public class SyncTrack {
 
                 HttpResponse trackRes = SpotifyApiHttpClient.getTrack(token, playlist.id);
 
-                if (trackRes.getStatusCode() != SpotifyApiHttpClient.SUCCESS_STATUS_CODE) 
+                if (trackRes.getStatusCode() != SpotifyApiHttpClient.SUCCESS_STATUS_CODE)
                 continue;
 
                 TrackResponse tracks = TrackResponse.parse(trackRes.getBody());
-
-                for (ItemTrack item : tracks.items) {
-                    result.add(item.track);
-                }
+                result.addAll(tracks.getTracks());
             }
+
             cont += playlists.items.size();
 
         } while (cont < playlists.total);
