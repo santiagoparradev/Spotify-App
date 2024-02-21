@@ -1,6 +1,7 @@
 public class SpotifyApiHttpClient extends HttpClient {
 
     public static integer MAXIMUM_ALBUM_REQUEST_SIZE = 20;
+    public static integer MAXIMUM_ARTIST_REQUEST_SIZE = 50;
     public static Integer SUCCESS_STATUS_CODE = 200;
     public static Integer LIMIT_PLAYLIST = 50;
     public static String SPOTIFY_HTTPS = 'https://api.spotify.com/v1';

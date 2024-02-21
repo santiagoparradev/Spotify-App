@@ -17,14 +17,11 @@ public class SyncArtist {
                 if (token.getStatusCode() != SpotifyApiHttpClient.SUCCESS_STATUS_CODE)
                 continue;
 
-                HttpResponse artistsRes = getArtistsResponse(token, cred);
+                List<SimplefieldArtistObject> artists = getArtistsList(
+                    TokenResponse.parse(token.getBody()).access_token,
+                    cred.SpotifyUserId__c);
 
-                if (artistsRes.getStatusCode() != SpotifyApiHttpClient.SUCCESS_STATUS_CODE)
-                continue;
-
-                ArtistResponse artistsResult = ArtistResponse.parse(artistsRes.getBody());
-
-                for (SimplefieldArtistObject artist : artistsResult.artists) {
+                for (SimplefieldArtistObject artist : artists) {
 
                     if (!recordsToUpsertArtistsMap.containsKey(artist.id)) {
 
@@ -41,63 +38,73 @@ public class SyncArtist {
                     }
                 }
             }
-            
+
             if (!recordsToUpsertArtistsMap.isEmpty()) {
                 upsert recordsToUpsertArtistsMap.values() SpotifyId__c;
             }
-            
+
         } catch (Exception error) {
             Spotify_Request_Log__e errorEvent = new Spotify_Request_Log__e(
                 ApexError__c = error.getMessage()
             );  
             errorEventResult = EventBus.publish(errorEvent);     
-        }       
+        }
     }
 
-    private static HttpResponse getArtistsResponse(HttpResponse token, ClientCredential__c cred) {
+    private static List<SimplefieldArtistObject> getArtistsList(String token, String spotifyUserId) {
+
+        List<String> artistIds = getArtistIds(token, spotifyUserId);
+        Set<String> artistsToProcess = new Set<String>();
+        List<SimplefieldArtistObject> result = new List<SimplefieldArtistObject>();
+
+        for (Integer i = 0; i < artistIds.size(); i ++) {
+
+            artistsToProcess.add(artistIds[i]);
+
+            if (artistsToProcess.size() == SpotifyApiHttpClient.MAXIMUM_ARTIST_REQUEST_SIZE || artistIds.size() == i + 1) {
+
+                HttpResponse response = SpotifyApiHttpClient.getArtist(token, artistsToProcess);
+
+                if (response.getStatusCode() != SpotifyApiHttpClient.SUCCESS_STATUS_CODE)
+                continue;
+
+                result.addAll(ArtistResponse.parse(response.getBody()).artists);
+                artistsToProcess.clear();
+            }
+        }
+
+        return result;
+    }
+
+    private static List<String> getArtistIds(String token, String spotifyUserId) {
 
         PlaylistResponse playlists;
         Integer cont = 0;
-        TokenResponse tokenRes = TokenResponse.parse(token.getBody());
-        Set<String>  artistIds = new Set<String>();
+        List<String> result = new List<String>();
 
         do {
 
-            HttpResponse playlistsRes = SpotifyApiHttpClient.getPlaylist(
-                tokenRes.access_token,
-                cred.SpotifyUserId__c,
-                cont 
-            );
+            HttpResponse playlistsRes = SpotifyApiHttpClient.getPlaylist(token, spotifyUserId, cont);
 
-            if (playlistsRes.getStatusCode() != SpotifyApiHttpClient.SUCCESS_STATUS_CODE) 
+            if (playlistsRes.getStatusCode() != SpotifyApiHttpClient.SUCCESS_STATUS_CODE)
             continue;
 
             playlists = PlaylistResponse.parse(playlistsRes.getBody());
 
             for (SimplefiedPlaylistObject playlist : playlists.items) {
 
-                HttpResponse trackRes = SpotifyApiHttpClient.getTrack(
-                    tokenRes.access_token,
-                    playlist.id
-                );
-
+                HttpResponse trackRes = SpotifyApiHttpClient.getTrack(token, playlist.id);
+                
                 if (trackRes.getStatusCode() != SpotifyApiHttpClient.SUCCESS_STATUS_CODE)
                 continue;
 
                 TrackResponse tracks = TrackResponse.parse(trackRes.getBody());
-
-                for (ItemTrack item : tracks.items) {
-                    SimplefieldTracksObject itemTrack = item.track;
-
-                    for (SimplefieldArtistObject artist : itemTrack.artists) {
-                        artistIds.add(artist.id);
-                    }
-                }
+                result.addAll(tracks.getArtistIds());
             }
             cont += playlists.items.size();
 
         } while (cont < playlists.total);
 
-        return SpotifyApiHttpClient.getArtist(tokenRes.access_token, artistIds);
+        return result;
     }
 }
