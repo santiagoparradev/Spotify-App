@@ -3,7 +3,7 @@ public class SyncTrack {
     @TestVisible
     private static Database.SaveResult errorEventResult;
     public static void syncTrack(List<ClientCredential__c> credentials) {
-        
+
         try {
             Map<String, Track__c> recordsToUpsertTracksMap = new Map<String, Track__c>();
 
@@ -17,16 +17,11 @@ public class SyncTrack {
                 if (token.getStatusCode() != SpotifyApiHttpClient.SUCCESS_STATUS_CODE)
                 continue;
 
-                HttpResponse tracksRes = getTracksResponse(token, cred);
+                List<SimplefieldTracksObject> tracks = getTracksList(
+                    TokenResponse.parse(token.getBody()).access_token,
+                    cred.SpotifyUserId__c);
 
-                if (tracksRes.getStatusCode() != SpotifyApiHttpClient.SUCCESS_STATUS_CODE)
-                continue;
-
-                TrackResponse tracksResult = TrackResponse.parse(tracksRes.getBody());
-
-                for (ItemTrack item : tracksResult.items) {
-
-                    SimplefieldTracksObject track = item.track;
+                for (SimplefieldTracksObject track : tracks) {
 
                     if (!recordsToUpsertTracksMap.containsKey(track.id)) {
 
@@ -46,50 +41,53 @@ public class SyncTrack {
                     }
                 }
             }
-            
+
             if (!recordsToUpsertTracksMap.isEmpty()) {
                 upsert recordsToUpsertTracksMap.values() SpotifyId__c;
             }
-            
+
         } catch (Exception error) {
             Spotify_Request_Log__e errorEvent = new Spotify_Request_Log__e(
                 ApexError__c = error.getMessage()
-            );  
+            );
             errorEventResult = EventBus.publish(errorEvent);
         }
     }
 
-    private static HttpResponse getTracksResponse(HttpResponse token, ClientCredential__c cred) {
+    private static List<SimplefieldTracksObject> getTracksList(String token, String spotifyUserId) {
 
-        HttpResponse trackRes;
+        List<SimplefieldTracksObject> result = new List<SimplefieldTracksObject>();
         PlaylistResponse playlists;
         Integer cont = 0;
-        TokenResponse tokenRes = TokenResponse.parse(token.getBody());
-        
+
         do {
 
             HttpResponse playlistsRes = SpotifyApiHttpClient.getPlaylist(
-                tokenRes.access_token,
-                cred.SpotifyUserId__c,
-                cont 
+                token,
+                spotifyUserId,
+                cont
             );
 
-            if (playlistsRes.getStatusCode() != SpotifyApiHttpClient.SUCCESS_STATUS_CODE) 
+            if (playlistsRes.getStatusCode() != SpotifyApiHttpClient.SUCCESS_STATUS_CODE)
             continue;
 
             playlists = PlaylistResponse.parse(playlistsRes.getBody());
 
             for (SimplefiedPlaylistObject playlist : playlists.items) {
 
-                trackRes = SpotifyApiHttpClient.getTrack(
-                    tokenRes.access_token,
-                    playlist.id
-                );
+                HttpResponse trackRes = SpotifyApiHttpClient.getTrack(token, playlist.id);
+
+                if (trackRes.getStatusCode() != SpotifyApiHttpClient.SUCCESS_STATUS_CODE)
+                continue;
+
+                TrackResponse tracks = TrackResponse.parse(trackRes.getBody());
+                result.addAll(tracks.getTracks());
             }
+
             cont += playlists.items.size();
 
         } while (cont < playlists.total);
-        
-        return trackRes;
+
+        return result;
     }
 }
