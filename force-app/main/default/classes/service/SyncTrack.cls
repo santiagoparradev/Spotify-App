@@ -6,6 +6,7 @@ public class SyncTrack {
 
         try {
             Map<String, Track__c> recordsToUpsertTracksMap = new Map<String, Track__c>();
+            List<TrackArtist__c> trackArtistList = new List<TrackArtist__c>();
 
             for (ClientCredential__c cred : credentials) {
 
@@ -22,6 +23,8 @@ public class SyncTrack {
                     cred.SpotifyUserId__c);
 
                 for (SimplefieldTracksObject track : tracks) {
+
+                    trackArtistList.addAll(track.getTrackArtist());
 
                     if (!recordsToUpsertTracksMap.containsKey(track.id)) {
 
@@ -44,6 +47,10 @@ public class SyncTrack {
 
             if (!recordsToUpsertTracksMap.isEmpty()) {
                 upsert recordsToUpsertTracksMap.values() SpotifyId__c;
+            }
+
+            if (!trackArtistList.isEmpty()) {
+                insert trackArtistList;
             }
 
         } catch (Exception error) {
