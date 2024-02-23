@@ -6,7 +6,7 @@ public class SyncTrack {
 
         try {
             Map<String, Track__c> recordsToUpsertTracksMap = new Map<String, Track__c>();
-            List<TrackArtist__c> trackArtistList = new List<TrackArtist__c>();
+            Map<String, TrackArtist__c> trackArtistMap = new Map<String, TrackArtist__c>();
 
             for (ClientCredential__c cred : credentials) {
 
@@ -24,7 +24,7 @@ public class SyncTrack {
 
                 for (SimplefieldTracksObject track : tracks) {
 
-                    trackArtistList.addAll(track.getTrackArtist());
+                    trackArtistMap.putAll(getTrackArtist(track.artists, track.id));
 
                     if (!recordsToUpsertTracksMap.containsKey(track.id)) {
 
@@ -49,9 +49,7 @@ public class SyncTrack {
                 upsert recordsToUpsertTracksMap.values() SpotifyId__c;
             }
 
-            if (!trackArtistList.isEmpty()) {
-                insert trackArtistList;
-            }
+            upsert trackArtistMap.values() TrackArtistKey__c;
 
         } catch (Exception error) {
             Spotify_Request_Log__e errorEvent = new Spotify_Request_Log__e(
@@ -96,5 +94,27 @@ public class SyncTrack {
         } while (cont < playlists.total);
 
         return result;
+    }
+
+    private static Map<String, TrackArtist__c> getTrackArtist(List<SimplefieldArtistObject> artists, String trackId) {
+
+        Map<String, TrackArtist__c> trackArtistMap = new Map<String, TrackArtist__c>();
+
+        for (SimplefieldArtistObject artist : artists) {
+
+            String key = artist.id + trackId;
+            TrackArtist__c trackArtistRecord = new TrackArtist__c(
+                TrackArtistKey__c = key,
+                Track__r = new Track__c(
+                    SpotifyId__c = trackId
+                ),
+                Artist__r = new Artist__c(
+                    SpotifyId__c = artist.id
+                )
+            );
+            trackArtistMap.put(key, trackArtistRecord);
+        }
+
+        return trackArtistMap;
     }
 }
