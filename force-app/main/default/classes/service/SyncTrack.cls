@@ -98,23 +98,18 @@ public class SyncTrack {
 
     private static Map<String, TrackArtist__c> getTrackArtist(List<SimplefieldArtistObject> artists, String trackId) {
 
-        Map<String, TrackArtist__c> trackArtistMap = new Map<String, TrackArtist__c>();
+        Map<String, TrackArtist__c> result = new Map<String, TrackArtist__c>();
 
         for (SimplefieldArtistObject artist : artists) {
 
             String key = artist.id + trackId;
             TrackArtist__c trackArtistRecord = new TrackArtist__c(
                 TrackArtistKey__c = key,
-                Track__r = new Track__c(
-                    SpotifyId__c = trackId
-                ),
-                Artist__r = new Artist__c(
-                    SpotifyId__c = artist.id
-                )
-            );
-            trackArtistMap.put(key, trackArtistRecord);
+                Track__r = new Track__c(SpotifyId__c = trackId),
+                Artist__r = new Artist__c(SpotifyId__c = artist.id));
+            result.put(key, trackArtistRecord);
         }
 
-        return trackArtistMap;
+        return result;
     }
 }

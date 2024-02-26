@@ -8,25 +8,31 @@ private class SyncTrackTest {
 
         addResponse(responseList, '{"access_token":"1111"}');
         addResponse(responseList, '{"total":2,"items":[{"id":"0"}]}');
-        addResponse(responseList, '{"items":[{"track":{' +
-            '"name":"track name",' +
-            '"id":"trackId",' +
-            '"explicit":true,' +
-            '"album":{"name":null,"id":"albumId"},' +
-            '"artists":[{"id":"artistId"}]}}]}');
+        addResponse(
+            responseList,
+            '{"items":[{' +
+                '"track":{' +
+                    '"name":"track name",' +
+                    '"id":"trackId",' +
+                    '"explicit":true,' +
+                    '"album":{"name":null,"id":"albumId"},' +
+                    '"artists":[{"id":"artistId"}]}}]}');
         addResponse(responseList, '{"total":2,"items":[{"id":"1"}]}');
-        addResponse(responseList, '{"items":[{"track":{' + 
-            '"name":"track name",' +
-            '"id":"trackId1",' +
-            '"explicit":true,' +
-            '"album":{"name":null,"id":"albumId1"},' +
-            '"artists":[{"id":"artistId1"}]}}]}');
+        addResponse(
+            responseList,
+            '{"items":[{' +
+                '"track":{' +
+                    '"name":"track name",' +
+                    '"id":"trackId1",' +
+                    '"explicit":true,' +
+                    '"album":{"name":null,"id":"albumId1"},' +
+                    '"artists":[{"id":"artistId1"}]}}]}');
         Test.setMock(HttpCalloutMock.class, new HttpCalloutMockFactory(responseList));       
         Album__c album = new Album__c(SpotifyId__c = 'albumId');
-        Album__c album1 = new Album__c(SpotifyId__c = 'albumId1');
+        Album__c secondAlbum = new Album__c(SpotifyId__c = 'albumId1');
 
         insert album;
-        insert album1;
+        insert secondAlbum;
 
         List<ClientCredential__c> newCredentials = new List<ClientCredential__c>{
             new ClientCredential__c(
