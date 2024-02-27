@@ -6,6 +6,7 @@ public class SyncPlaylist {
 
         try {
             List<Playlist__c> forInsert = new List<Playlist__c>();
+            Map<String, PlaylistTrack__c> playlistTrackMap = new Map<String, PlaylistTrack__c>();
 
             for (ClientCredential__c cred : credentials) {
 
@@ -37,6 +38,8 @@ public class SyncPlaylist {
 
                     for (SimplefiedPlaylistObject playlist : playlists.items) {
 
+                        playlistTrackMap.putAll(getPlaylistTrack(tokenRes.access_token, playlist.id));
+
                         Playlist__c record = new Playlist__c(
                             SpotifyId__c = playlist.id,
                             Name = playlist.name,
@@ -54,12 +57,38 @@ public class SyncPlaylist {
             if (!forInsert.isEmpty()) {
                 upsert forInsert SpotifyId__c;
             }
-            
+
+            upsert playlistTrackMap.values() PlaylistTrack__c;
+
         } catch (Exception error) {
             Spotify_Request_Log__e errorEvent = new Spotify_Request_Log__e(
                 ApexError__c = error.getMessage()
-            );  
+            );
             errorEventResult = EventBus.publish(errorEvent);
         }
-    }    
+    }
+
+    private static Map<String, PlaylistTrack__c> getPlaylistTrack(String token,String playlistId) {
+
+        Map<String, PlaylistTrack__c> result = new Map<String, PlaylistTrack__c>();
+
+        HttpResponse trackRes = SpotifyApiHttpClient.getTrack(token, playlistId);
+
+        if (trackRes.getStatusCode() == SpotifyApiHttpClient.SUCCESS_STATUS_CODE) {
+
+            TrackResponse tracks = TrackResponse.parse(trackRes.getBody());
+
+            for (SimplefieldTracksObject track : tracks.getTracks()) {
+
+                String key = track.id + playlistId;
+                PlaylistTrack__c playlistTrackRecord = new PlaylistTrack__c(
+                    PlaylistTrack__c = key,
+                    Playlist__r = new Playlist__c(SpotifyId__c = playlistId),
+                    Track__r = new Track__c(SpotifyId__c = track.id));
+                result.put(key, playlistTrackRecord);
+            }
+        }
+
+        return result;
+    }  
 }

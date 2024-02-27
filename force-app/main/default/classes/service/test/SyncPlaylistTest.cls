@@ -7,7 +7,9 @@ private class SyncPlaylistTest {
         List<HttpResponse> responseList = new List<HttpResponse>();
         addResponse(responseList, '{"access_token":"1111"}');
         addResponse(responseList, '{"total":2,"items":[{"id":"0","name":"name","publicField":true}]}');
+        addResponse(responseList, '{"items":[{"track":{"id":"trackId"}}]}');
         addResponse(responseList, '{"total":2,"items":[{"id":"1","name":"name","publicField":true}]}');
+        addResponse(responseList, '{"items":[{"track":{"id":"trackId1"}}]}');
         Test.setMock(HttpCalloutMock.class, new HttpCalloutMockFactory(responseList));
 
         List<ClientCredential__c> newCredentials = new List<ClientCredential__c>{
