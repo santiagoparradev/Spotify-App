@@ -52,7 +52,7 @@ public class SpotifyApiHttpClient extends HttpClient {
             return response;
     }
 
-    public static HttpResponse getTrack(String token, String id) {
+    public static HttpResponse getPlaylistTracks(String token, String id) {
 
         String endpointFormat = String.format('/playlists/{0}/tracks', new List<Object>{id});
         String endpoint = SPOTIFY_HTTPS + endpointFormat; 

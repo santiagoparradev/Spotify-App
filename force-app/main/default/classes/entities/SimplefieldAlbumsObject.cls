@@ -1,6 +1,7 @@
 public class SimplefieldAlbumsObject {
     
     public String name;
+    public List<SimplefieldArtistObject> artists;
     public List<String> genres;
     public Integer popularity;
     public Date release_date;

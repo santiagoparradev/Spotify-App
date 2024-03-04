@@ -6,6 +6,11 @@ public class SyncAlbum {
 
         try {
             Map<String, Album__c> recordsToUpsertAlbumsMap = new Map<String, Album__c>();
+            Map<String, AlbumArtist__c> albumArtistMap = new Map<String, AlbumArtist__c>();
+            Set<String> albumId = new Set<String>();
+            Set<String> artistId = new Set<String>();
+            List<SimplefieldAlbumsObject> albums = new List<SimplefieldAlbumsObject>();
+            Set<String> spotifyIds = new Set<String>();
 
             for (ClientCredential__c cred : credentials) {
 
@@ -17,25 +22,44 @@ public class SyncAlbum {
                 if (token.getStatusCode() != SpotifyApiHttpClient.SUCCESS_STATUS_CODE)
                 continue;
 
-                List<SimplefieldAlbumsObject> albums = getAlbumsList(
+                albums.addAll(getAlbumsList(
                     TokenResponse.parse(token.getBody()).access_token,
-                    cred.SpotifyUserId__c);
+                    cred.SpotifyUserId__c));
 
                 for (SimplefieldAlbumsObject album : albums) {
 
-                    if (!recordsToUpsertAlbumsMap.containsKey(album.id)) {
+                    albumId.add(album.id);
 
-                        Album__c albumRecord = new Album__c(
-                            Name = album.name,
-                            Genres__c = String.join(album.genres, ';'),
-                            Popularity__c = album.popularity,
-                            ReleaseDate__c = album.release_date,
-                            SpotifyId__c = album.id,
-                            url__c = album.external_urls?.spotify
-                        );
+                    for (SimplefieldArtistObject artist : album.artists) {
 
-                        recordsToUpsertAlbumsMap.put(album.id, albumRecord);
+                        artistId.add(artist.id);
                     }
+                }
+            }
+
+            for (Artist__c artist : [SELECT SpotifyId__c FROM Artist__c WHERE SpotifyId__c IN :artistId]) {
+
+                if (!spotifyIds.contains(artist.SpotifyId__c)) {
+                    spotifyIds.add(artist.SpotifyId__c);
+                }
+            }
+
+            for (SimplefieldAlbumsObject album : albums) {
+
+                albumArtistMap.putAll(getAlbumArtist(album.artists, album.id, spotifyIds));
+
+                if (!recordsToUpsertAlbumsMap.containsKey(album.id)) {
+
+                    Album__c albumRecord = new Album__c(
+                        Name = album.name,
+                        Genres__c = String.join(album.genres, ';'),
+                        Popularity__c = album.popularity,
+                        ReleaseDate__c = album.release_date,
+                        SpotifyId__c = album.id,
+                        url__c = album.external_urls?.spotify
+                    );
+
+                    recordsToUpsertAlbumsMap.put(album.id, albumRecord);
                 }
             }
 
@@ -43,12 +67,14 @@ public class SyncAlbum {
                 upsert recordsToUpsertAlbumsMap.values() SpotifyId__c;
             }
 
+            upsert albumArtistMap.values() AlbumArtist__c;
+
         } catch (Exception error) {
             Spotify_Request_Log__e errorEvent = new Spotify_Request_Log__e(
                 ApexError__c = error.getMessage()
             );
             errorEventResult = EventBus.publish(errorEvent);
-        } 
+        }
     }
 
     private static List<SimplefieldAlbumsObject> getAlbumsList(String token, String spotifyUserId) {
@@ -97,10 +123,7 @@ public class SyncAlbum {
 
             for (SimplefiedPlaylistObject playlist : playlists.items) {
 
-                HttpResponse trackRes = SpotifyApiHttpClient.getTrack(
-                    token,
-                    playlist.id
-                );
+                HttpResponse trackRes = SpotifyApiHttpClient.getPlaylistTracks(token, playlist.id);
 
                 if (trackRes.getStatusCode() != SpotifyApiHttpClient.SUCCESS_STATUS_CODE) 
                 continue;
@@ -111,6 +134,26 @@ public class SyncAlbum {
             cont += playlists.items.size();
 
         } while (cont < playlists.total);
+
+        return result;
+    }
+
+    private static Map<String, AlbumArtist__c> getAlbumArtist(List<SimplefieldArtistObject> artists, String albumId, Set<String> spotifyIds) {
+
+        Map<String, AlbumArtist__c> result = new Map<String, AlbumArtist__c>();
+
+        for (SimplefieldArtistObject artist : artists) {
+
+            String key = artist.id + albumId;
+            AlbumArtist__c albumArtistRecord = new AlbumArtist__c(
+                AlbumArtist__c = key,
+                Album__r = new Album__c(SpotifyId__c = albumId),
+                Artist__r = new Artist__c(SpotifyId__c = artist.id));
+
+            if (spotifyIds.contains(artist.id)) {
+                result.put(key, albumArtistRecord);
+            }
+        }
 
         return result;
     }

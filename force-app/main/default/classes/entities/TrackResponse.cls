@@ -12,9 +12,8 @@ public class TrackResponse {
         Set<String> result = new Set<String>();
 
         for (ItemTrack item : this.items) {
-            if (!result.contains(item.track.album.id)) {
-                result.add(item.track.album.id);
-            }
+            result.add(item.track.album.id);
+            
         }
         return result;
     }
@@ -36,13 +35,9 @@ public class TrackResponse {
 
         for (ItemTrack item : this.items) {
 
-            SimplefieldTracksObject track = item.track;
-
-            for (SimplefieldArtistObject artist : track.artists) {
-
-                if (!result.contains(artist.id)) {
-                    result.add(artist.id);
-                }
+            for (SimplefieldArtistObject artist : item.track.artists) {
+                result.add(artist.id);
+                
             }
         }
 
