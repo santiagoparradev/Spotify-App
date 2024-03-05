@@ -7,10 +7,9 @@ public class SyncAlbum {
         try {
             Map<String, Album__c> recordsToUpsertAlbumsMap = new Map<String, Album__c>();
             Map<String, AlbumArtist__c> albumArtistMap = new Map<String, AlbumArtist__c>();
-            Set<String> albumId = new Set<String>();
-            Set<String> artistId = new Set<String>();
+            Set<String> artistIds = new Set<String>();
             List<SimplefieldAlbumsObject> albums = new List<SimplefieldAlbumsObject>();
-            Set<String> spotifyIds = new Set<String>();
+            Set<String> artisInDB = new Set<String>();
 
             for (ClientCredential__c cred : credentials) {
 
@@ -28,25 +27,20 @@ public class SyncAlbum {
 
                 for (SimplefieldAlbumsObject album : albums) {
 
-                    albumId.add(album.id);
-
                     for (SimplefieldArtistObject artist : album.artists) {
-
-                        artistId.add(artist.id);
+                        artistIds.add(artist.id);
                     }
                 }
             }
 
-            for (Artist__c artist : [SELECT SpotifyId__c FROM Artist__c WHERE SpotifyId__c IN :artistId]) {
-
-                if (!spotifyIds.contains(artist.SpotifyId__c)) {
-                    spotifyIds.add(artist.SpotifyId__c);
+            for (Artist__c artist : [SELECT SpotifyId__c FROM Artist__c WHERE SpotifyId__c IN :artistIds]) {
+                if (!artisInDB.contains(artist.SpotifyId__c)) {
+                    artisInDB.add(artist.SpotifyId__c);
                 }
             }
 
             for (SimplefieldAlbumsObject album : albums) {
-
-                albumArtistMap.putAll(getAlbumArtist(album.artists, album.id, spotifyIds));
+                albumArtistMap.putAll(getAlbumArtist(album.artists, album.id, artisInDB));
 
                 if (!recordsToUpsertAlbumsMap.containsKey(album.id)) {
 
@@ -84,7 +78,6 @@ public class SyncAlbum {
         List<SimplefieldAlbumsObject> result = new List<SimplefieldAlbumsObject>();
 
         for (Integer i = 0; i < albumIds.size(); i ++) {
-
             albumsToProcess.add(albumIds[i]);
 
             if (albumsToProcess.size() == SpotifyApiHttpClient.MAXIMUM_ALBUM_REQUEST_SIZE || albumIds.size() == i + 1) {
@@ -138,7 +131,7 @@ public class SyncAlbum {
         return result;
     }
 
-    private static Map<String, AlbumArtist__c> getAlbumArtist(List<SimplefieldArtistObject> artists, String albumId, Set<String> spotifyIds) {
+    private static Map<String, AlbumArtist__c> getAlbumArtist(List<SimplefieldArtistObject> artists, String albumId, Set<String> artisInDB) {
 
         Map<String, AlbumArtist__c> result = new Map<String, AlbumArtist__c>();
 
@@ -150,7 +143,7 @@ public class SyncAlbum {
                 Album__r = new Album__c(SpotifyId__c = albumId),
                 Artist__r = new Artist__c(SpotifyId__c = artist.id));
 
-            if (spotifyIds.contains(artist.id)) {
+            if (artisInDB.contains(artist.id)) {
                 result.put(key, albumArtistRecord);
             }
         }

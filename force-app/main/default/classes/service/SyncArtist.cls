@@ -92,14 +92,14 @@ public class SyncArtist {
             playlists = PlaylistResponse.parse(playlistsRes.getBody());
 
             for (SimplefiedPlaylistObject playlist : playlists.items) {
-                //cambiar nombre .getplaylisTracks
+
                 HttpResponse trackRes = SpotifyApiHttpClient.getPlaylistTracks(token, playlist.id);
                 
                 if (trackRes.getStatusCode() != SpotifyApiHttpClient.SUCCESS_STATUS_CODE)
                 continue;
 
                 TrackResponse tracks = TrackResponse.parse(trackRes.getBody());
-                                result.addAll(tracks.getArtistIds());
+                result.addAll(tracks.getArtistIds());
             }
             cont += playlists.items.size();
 
