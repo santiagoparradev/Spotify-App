@@ -37,7 +37,6 @@ public class TrackResponse {
 
             for (SimplefieldArtistObject artist : item.track.artists) {
                 result.add(artist.id);
-                
             }
         }
 
