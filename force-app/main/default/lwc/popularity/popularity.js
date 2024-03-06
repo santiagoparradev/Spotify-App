@@ -5,20 +5,19 @@ import POPULARITY_FIELD from "@salesforce/schema/Track__c.Popularity__c";
 export default class Popularity extends LightningElement {
   @api recordId;
   message;
-
-  @wire(getRecord, {
-    recordId: "$recordId",
-    fields: [POPULARITY_FIELD]
-  })
+  @wire(getRecord, { recordId: "$recordId", fields: [POPULARITY_FIELD] })
   trackRecord({ data }) {
     if (data) {
       const popularity = getFieldValue(data, POPULARITY_FIELD);
       let color = null;
+      let textColor = "#000000";
+
       if (popularity == null) {
         this.message = null;
       } else if (popularity <= 30) {
         color = "#d62023";
         this.message = "this song is bad according to most people";
+        textColor = "#FDFEFE";
       } else if (popularity <= 50) {
         color = "#d1d62d";
         this.message = "not the best song";
@@ -29,7 +28,8 @@ export default class Popularity extends LightningElement {
         this.message = "this song is fire";
         color = "#40f702";
       }
-      document.documentElement.style.setProperty("--titleColor", color);
+      document.documentElement.style.setProperty("--bannerColor", color);
+      document.documentElement.style.setProperty("--textColor", textColor);
     }
   }
 }
