@@ -80,7 +80,7 @@ public class SyncTrack {
 
             for (SimplefiedPlaylistObject playlist : playlists.items) {
 
-                HttpResponse trackRes = SpotifyApiHttpClient.getTrack(token, playlist.id);
+                HttpResponse trackRes = SpotifyApiHttpClient.getPlaylistTracks(token, playlist.id);
 
                 if (trackRes.getStatusCode() != SpotifyApiHttpClient.SUCCESS_STATUS_CODE)
                 continue;
