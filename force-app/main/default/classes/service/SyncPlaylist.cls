@@ -72,7 +72,7 @@ public class SyncPlaylist {
 
         Map<String, PlaylistTrack__c> result = new Map<String, PlaylistTrack__c>();
 
-        HttpResponse trackRes = SpotifyApiHttpClient.getTrack(token, playlistId);
+        HttpResponse trackRes = SpotifyApiHttpClient.getPlaylistTracks(token, playlistId);
 
         if (trackRes.getStatusCode() == SpotifyApiHttpClient.SUCCESS_STATUS_CODE) {
 
