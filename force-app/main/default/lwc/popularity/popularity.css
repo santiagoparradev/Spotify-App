@@ -1,3 +1,9 @@
 :host {
-  --slds-c-alert-color-background: var(--titleColor);
+  --slds-c-alert-color-background: var(--bannerColor);
+}
+
+.color {
+  color: var(--textColor);
+  font-size: medium;
+  font-weight: 500;
 }
