@@ -37,11 +37,11 @@ public class SyncPlaylist {
                     .replaceAll('"public" :', '"publicField" :'));
 
                     for (SimplefiedPlaylistObject playlist : playlists.items) {
-                        Integer TotalTracksDuration = 0;
+                        Integer duration = 0;
 
                         for (SimplefieldTracksObject track : getPlaylistTrack(tokenRes.access_token, playlist.id)) {
 
-                            TotalTracksDuration += track.duration_ms;
+                            duration += track.duration_ms;
                             String key = track.id + playlist.id;
                             PlaylistTrack__c playlistTrackRecord = new PlaylistTrack__c(
                                 PlaylistTrack__c = key,
@@ -57,7 +57,7 @@ public class SyncPlaylist {
                             Public__c =  playlist.publicField,
                             url__c = playlist.external_urls?.spotify,
                             followers__c = playlist.followers,
-                            TotalTracksDuration__c = TotalTracksDuration
+                            Duration__c = duration
                         );
                         forInsert.add(record);
                     }

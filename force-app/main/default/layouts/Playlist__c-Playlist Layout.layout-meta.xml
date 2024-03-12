@@ -42,8 +42,8 @@
                 <field>Public__c</field>
             </layoutItems>
             <layoutItems>
-                <behavior>Edit</behavior>
-                <field>TotalTracksDuration__c</field>
+                <behavior>Readonly</behavior>
+                <field>Duration__c</field>
             </layoutItems>
         </layoutColumns>
         <layoutColumns>

@@ -105,6 +105,11 @@
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
+        <editable>false</editable>
+        <field>Playlist__c.Duration__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
         <editable>true</editable>
         <field>Playlist__c.Followers__c</field>
         <readable>true</readable>
@@ -117,11 +122,6 @@
     <fieldPermissions>
         <editable>true</editable>
         <field>Playlist__c.SpotifyId__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Playlist__c.TotalTracksDuration__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
