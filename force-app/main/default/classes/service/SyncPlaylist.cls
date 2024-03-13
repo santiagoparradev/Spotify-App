@@ -17,13 +17,13 @@ public class SyncPlaylist {
 
                 if (token.getStatusCode() != SpotifyApiHttpClient.SUCCESS_STATUS_CODE)
                 continue;
-                
+
                 TokenResponse tokenRes = TokenResponse.parse(token.getBody());
                 PlaylistResponse playlists;
                 Integer cont = 0;
 
                 do {
-                    
+
                     HttpResponse playlistsRes = SpotifyApiHttpClient.getPlaylist(
                         tokenRes.access_token, 
                         cred.SpotifyUserId__c, 
@@ -37,8 +37,18 @@ public class SyncPlaylist {
                     .replaceAll('"public" :', '"publicField" :'));
 
                     for (SimplefiedPlaylistObject playlist : playlists.items) {
+                        Integer duration = 0;
 
-                        playlistTrackMap.putAll(getPlaylistTrack(tokenRes.access_token, playlist.id));
+                        for (SimplefieldTracksObject track : getPlaylistTrack(tokenRes.access_token, playlist.id)) {
+
+                            duration += track.duration_ms;
+                            String key = track.id + playlist.id;
+                            PlaylistTrack__c playlistTrackRecord = new PlaylistTrack__c(
+                                PlaylistTrack__c = key,
+                                Playlist__r = new Playlist__c(SpotifyId__c = playlist.id),
+                                Track__r = new Track__c(SpotifyId__c = track.id));
+                            playlistTrackMap.put(key, playlistTrackRecord);
+                        }
 
                         Playlist__c record = new Playlist__c(
                             SpotifyId__c = playlist.id,
@@ -46,7 +56,8 @@ public class SyncPlaylist {
                             Description__c = playlist.description,
                             Public__c =  playlist.publicField,
                             url__c = playlist.external_urls?.spotify,
-                            followers__c = playlist.followers
+                            followers__c = playlist.followers,
+                            Duration__c = duration
                         );
                         forInsert.add(record);
                     }
@@ -68,25 +79,15 @@ public class SyncPlaylist {
         }
     }
 
-    private static Map<String, PlaylistTrack__c> getPlaylistTrack(String token,String playlistId) {
+    private static List<SimplefieldTracksObject> getPlaylistTrack(String token,String playlistId) {
 
-        Map<String, PlaylistTrack__c> result = new Map<String, PlaylistTrack__c>();
-
+        List<SimplefieldTracksObject> result = new List<SimplefieldTracksObject>();
         HttpResponse trackRes = SpotifyApiHttpClient.getPlaylistTracks(token, playlistId);
 
         if (trackRes.getStatusCode() == SpotifyApiHttpClient.SUCCESS_STATUS_CODE) {
 
             TrackResponse tracks = TrackResponse.parse(trackRes.getBody());
-
-            for (SimplefieldTracksObject track : tracks.getTracks()) {
-
-                String key = track.id + playlistId;
-                PlaylistTrack__c playlistTrackRecord = new PlaylistTrack__c(
-                    PlaylistTrack__c = key,
-                    Playlist__r = new Playlist__c(SpotifyId__c = playlistId),
-                    Track__r = new Track__c(SpotifyId__c = track.id));
-                result.put(key, playlistTrackRecord);
-            }
+            result.addAll(tracks.getTracks());
         }
 
         return result;
