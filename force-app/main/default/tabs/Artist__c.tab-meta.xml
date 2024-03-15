@@ -1,5 +1,6 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="UTF-8" ?>
 <CustomTab xmlns="http://soap.sforce.com/2006/04/metadata">
     <customObject>true</customObject>
-    <motif>Custom89: Saxophone</motif>
+    <icon>01504000000yxlb</icon>
+    <motif>Custom203: TV Widescreen</motif>
 </CustomTab>
