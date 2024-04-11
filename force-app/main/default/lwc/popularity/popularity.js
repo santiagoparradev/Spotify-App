@@ -10,23 +10,23 @@ export default class Popularity extends LightningElement {
     if (data) {
       const popularity = getFieldValue(data, POPULARITY_FIELD);
       let color = null;
-      let textColor = "#000000";
+      let textColor = "#FFFFFF";
 
       if (popularity == null) {
         this.message = null;
       } else if (popularity <= 30) {
-        color = "#d62023";
+        color = "#004700";
         this.message = "this song is bad according to most people";
-        textColor = "#FDFEFE";
       } else if (popularity <= 50) {
-        color = "#d1d62d";
+        color = "#007500";
         this.message = "not the best song";
       } else if (popularity <= 70) {
-        color = "#72b533";
+        color = "#00A300";
         this.message = "great song";
       } else {
         this.message = "this song is fire";
-        color = "#40f702";
+        color = "#00D100";
+        textColor = "#191414";
       }
       document.documentElement.style.setProperty("--bannerColor", color);
       document.documentElement.style.setProperty("--textColor", textColor);
