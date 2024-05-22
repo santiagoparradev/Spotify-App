@@ -2,24 +2,25 @@
 private class TrackPreviewControllerTest {
   @IsTest
 	static void itShouldReturnSpotifyTrackPreviewUrl() {
-		// prepare data
+
+		// DATA
 		List<HttpResponse> responseList = new List<HttpResponse>();
         addResponse(responseList, '{"access_token":"1111"}');
         addResponse(responseList, '{"preview_url":"this is the url"}');
         Test.setMock(HttpCalloutMock.class, new HttpCalloutMockFactory(responseList));
 
-		ClientCredential__c newCretentials = new ClientCredential__c(
-			User__c = UserInfo.getUserId(),
-			ClientId__c = 'ClientId__c',
-			ClientSecret__c = 'ClientSecret__c',
-			SpotifyUserId__c = 'SpotifyUserId__c'
-		);
-		insert newCretentials;
-		// test
+		// mock credentials
+		CredentialTestDataFactory testDataFactory = new CredentialTestDataFactory();
+		testDataFactory.createCreds();
+		ClientCredential__c creds = testDataFactory.creds;
+		insert creds;
+
+		// TEST
 		Test.startTest();
 		String url = trackPreviewController.findTrackPreviewUrl('123456'); 
 		Test.stopTest();
-		// assert
+
+		// ASSERT
         String.isNotBlank(url);
 	}
 
@@ -29,5 +30,5 @@ private class TrackPreviewControllerTest {
         baseResponse.setStatusCode(SpotifyApiHttpClient.SUCCESS_STATUS_CODE);
         baseResponse.setBody(body);
         responseList.add(baseResponse);
-    } 
+    }
 }
